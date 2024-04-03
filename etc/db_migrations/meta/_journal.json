@@ -1,0 +1,69 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1711492660512,
+      "tag": "0000_thick_black_widow",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1711493045429,
+      "tag": "0001_loose_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1711495688646,
+      "tag": "0002_married_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1711540920695,
+      "tag": "0003_wise_the_call",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1711541855747,
+      "tag": "0004_wet_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1711542615842,
+      "tag": "0005_quiet_blob",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1711542715395,
+      "tag": "0006_crazy_jack_flag",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1711693961249,
+      "tag": "0007_early_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1711694492435,
+      "tag": "0008_blushing_gamora",
+      "breakpoints": true
+    }
+  ]
+}

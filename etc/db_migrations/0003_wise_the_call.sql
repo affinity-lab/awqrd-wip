@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `modified_at` timestamp DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP;

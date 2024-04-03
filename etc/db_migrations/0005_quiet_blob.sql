@@ -1,0 +1,1 @@
+ALTER TABLE `user` MODIFY COLUMN `updated_at` timestamp ON UPDATE CURRENT_TIMESTAMP;
