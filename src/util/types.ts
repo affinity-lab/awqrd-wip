@@ -6,3 +6,5 @@ export type MaybeNull<TYPE> = TYPE | null;
 export type MaybeUnset<TYPE> = TYPE | null | undefined;
 export type NonEmptyArray<T = any> = [T, ...T[]];
 export type EmptyArray = [];
+export type NumericString = `${number}`;
+export type Numeric = NumericString|number;

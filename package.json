@@ -10,6 +10,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "change-case-all": "^2.1.0",
     "drizzle-orm": "^0.30.6",
     "fast-glob": "^3.3.2",
     "hono": "^4.1.7",
