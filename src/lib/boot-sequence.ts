@@ -9,10 +9,7 @@ import {services} from "./services.ts";
 export async function bootSequence() {
 	await services.migrator();
 	const app = new Hono();
-
-	let commands = loadModuleDefaultExports(path.resolve(__dirname, "../commands/"));
-
+	loadModuleDefaultExports(path.resolve(__dirname, "../commands/"));
 	readCommands(clients)
-
 	return {app}
 }

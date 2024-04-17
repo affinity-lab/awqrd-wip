@@ -2,7 +2,7 @@ import {like, sql} from "drizzle-orm";
 import NodeCache from "node-cache";
 import {z} from "zod";
 import {user} from "./!schema.ts";
-import {services} from "../services/services.ts";
+import {services} from "../lib/services.ts";
 import {Entity} from "../awqrd/storm/entity.ts";
 import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
 import {Export} from "../awqrd/storm/export.ts";

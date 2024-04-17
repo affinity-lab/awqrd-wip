@@ -1,5 +1,5 @@
 import {blank} from "./!schema.ts";
-import {services} from "../services/services.ts";
+import {services} from "../lib/services.ts";
 import {Entity} from "../awqrd/storm/entity.ts";
 import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
 import type {Dto} from "../awqrd/storm/types.ts";

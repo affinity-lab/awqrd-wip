@@ -1,23 +1,23 @@
-type MiddlewareFn<T = any> = (state: T, next: () => Promise<any>) => Promise<any>;
-type WithMiddleware<T = any> = any & { middleware: MiddlewareFn<T>; };
+export type MiddlewareFn<T = any> = (state: T, next: () => Promise<any>) => Promise<any>;
+export type Middleware<T = any> = any & { middleware: MiddlewareFn<T>; };
 
-async function pipeline<STATE = any, RES = any>(
+export async function pipeline<STATE = any, RES = any>(
 	state: STATE,
-	...middlewares: Array<MiddlewareFn<STATE> | WithMiddleware<STATE>>
+	...middlewares: Array<MiddlewareFn<STATE> | Middleware<STATE>>
 ): Promise<any> {
 	let middleware: MiddlewareFn | undefined = middlewares.shift();
 	if (middleware === undefined) throw Error('Middleware not found!');
 	let next: () => Promise<any> = () => pipeline(state, ...middlewares);
 	if (typeof middleware === "function") return await middleware(state, next);
-	else if (typeof middleware === "object") return await (middleware as WithMiddleware).middleware(state, next);
+	else if (typeof middleware === "object") return await (middleware as Middleware).middleware(state, next);
 	throw new Error("some error occured in pipeline execution")
 }
 
 
-class Pipeline<STATE = any, RES = any> {
-	private readonly middlewares: Array<MiddlewareFn<STATE> | WithMiddleware<STATE>>;
+export class Pipeline<STATE = any, RES = any> {
+	private readonly middlewares: Array<MiddlewareFn<STATE> | Middleware<STATE>>;
 
-	constructor(...middlewares: Array<MiddlewareFn<STATE> | WithMiddleware<STATE>>) {
+	constructor(...middlewares: Array<MiddlewareFn<STATE> | Middleware<STATE>>) {
 		this.middlewares = middlewares;
 	}
 	run(state: STATE): Promise<RES> {

@@ -25,6 +25,8 @@ export class Comet {
 
 	static Command(config: CometCommandConfig = {}): (target: any, propertyKey: string) => void {
 		return (target: any, propertyKey: string) => {
+			if(config === undefined) config = {};
+			if(config.name === undefined) config.name = propertyKey;
 			this.classMetaData.get(target.constructor, true)
 			for (const key in config) {
 				this.classMetaData.get(target.constructor, true).set(["command", propertyKey, key], config[key]);
@@ -33,6 +35,8 @@ export class Comet {
 	}
 	static Group(config: CometGroupConfig = {}): (target: any) => void {
 		return (target: any) => {
+			if(config === undefined) config = {};
+			if(config.name === undefined) config.name = target.name;
 			this.classMetaData.get(target, true)
 			for (const key in config) {
 				this.classMetaData.get(target, true).set(`group.${key}`, config[key]);

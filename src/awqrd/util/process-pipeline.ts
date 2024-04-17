@@ -8,13 +8,13 @@ interface Block<OPTIONS extends string> {
 	/**
 	 * Prepends a segment to the block.
 	 * @param {Function} segment - The segment function to prepend.
-	 * @returns {Record<OPTIONS, BlockRunner<OPTIONS>>} The updated block runner instance.
+	 * @returns The updated block runner instance.
 	 */
 	prepend: (segment: Function) => Record<OPTIONS, BlockRunner<OPTIONS>>;
 	/**
 	 * Appends a segment to the block.
 	 * @param {Function} segment - The segment function to append.
-	 * @returns {Record<OPTIONS, BlockRunner<OPTIONS>>} The updated block runner instance.
+	 * @returns The updated block runner instance.
 	 */
 	append: (segment: Function) => Record<OPTIONS, BlockRunner<OPTIONS>>;
 }
@@ -38,7 +38,7 @@ class BlockRunner<OPTIONS extends string> implements Block<OPTIONS> {
 	 * @param {Function} segment - The segment function to prepend.
 	 * @returns {Record<OPTIONS, BlockRunner<OPTIONS>>} The updated block runner instance.
 	 */
-	prepend(segment: Function) {
+	prepend(segment: Function): Record<OPTIONS, BlockRunner<OPTIONS>> {
 		this.#segments.unshift(segment);
 		return this.pipeline.blocks as unknown as Record<OPTIONS, BlockRunner<OPTIONS>>;
 	}
@@ -47,7 +47,7 @@ class BlockRunner<OPTIONS extends string> implements Block<OPTIONS> {
 	 * @param {Function} segment - The segment function to append.
 	 * @returns {Record<OPTIONS, BlockRunner<OPTIONS>>} The updated block runner instance.
 	 */
-	append(segment: Function) {
+	append(segment: Function): Record<OPTIONS, BlockRunner<OPTIONS>> {
 		this.#segments.push(segment)
 		return this.pipeline.blocks as unknown as Record<OPTIONS, BlockRunner<OPTIONS>>;
 	}
@@ -88,7 +88,7 @@ export class ProcessPipeline<OPTIONS extends string = string> {
 	 * @param {Record<string, any>} state - The state object to pass through the pipeline.
 	 * @returns {Promise<Record<string, any>>} A promise that resolves to the final state after executing all blocks.
 	 */
-	async run(ctx: object | undefined, state: Record<string, any>) {
+	async run(ctx: object | undefined, state: Record<string, any>): Promise<Record<string, any>> {
 		for (const name of this.names) await this.#blocks[name]!.run(ctx, state);
 		return state;
 	}
@@ -98,7 +98,7 @@ export class ProcessPipeline<OPTIONS extends string = string> {
 	 * @param {Partial<Record<OPTIONS, [Function] | Function>>} blocks - The functions to set up for each block.
 	 * @returns {this} The updated ProcessPipeline instance.
 	 */
-	setup(blocks: Partial<Record<OPTIONS, [Function] | Function>>) {
+	setup(blocks: Partial<Record<OPTIONS, [Function] | Function>>): this {
 		for (const key in blocks) {
 			if (Array.isArray(blocks[key])) (blocks[key] as Array<Function>).forEach(fn => this.blocks[key].append(fn));
 			if (blocks[key] instanceof Function) this.blocks[key].append(blocks[key] as Function);

@@ -574,7 +574,7 @@ export let mimeTypeMap:Record<string, string> = {
 	".rpss": "application/vnd.nokia.radio-presets",
 	".rpst": "application/vnd.nokia.radio-preset",
 	".rq": "application/sparql-query",
-	".rs": "application/rls-services+xml",
+	".rs": "application/rls-lib+xml",
 	".rsd": "application/rsd+xml",
 	".rss": "application/rss+xml",
 	".rtf": "application/rtf",

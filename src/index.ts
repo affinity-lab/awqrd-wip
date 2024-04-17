@@ -5,8 +5,8 @@ import {getClient} from "./awqrd/comet/client/get-client.ts";
 import {recognizeClient} from "./awqrd/comet/client/recognize-client.ts";
 import {stormImgServerHono} from "./awqrd/storm-plugins/storage-extensions/image/storage-img-server.ts";
 import {stormStorageServerHono} from "./awqrd/storm-plugins/storage/helper/storm-storage-server.ts";
-import {bootSequence} from "./services/boot-sequence.ts";
-import {clients} from "./services/clients/clients.ts";
+import {bootSequence} from "./lib/boot-sequence.ts";
+import {clients} from "./lib/clients/clients.ts";
 
 
 let {app} = await bootSequence()
@@ -17,10 +17,10 @@ stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX
 
 app.post('/api/:command',
 	recognizeClient,
-	async (c: Context<Record<string, any>>, next   ) => {
-		let {name, version}: { name: string, version: number } = c.get("comet-client");
-		let client = getClient(clients, name, version);
-		return client.resolve(c.req.param("command"), c);
+	async (ctx: Context<Record<string, any>>, next) => {
+		let {name, version, apiKey}: { name: string, version: number, apiKey: string } = ctx.get("comet-client");
+		let client = getClient(clients, name, version, apiKey);
+		return client.resolve(ctx.req.param("command"), ctx);
 	});
 
 
@@ -51,7 +51,7 @@ Bun.serve({
 // 	await userRepository.save(user);
 // 	await user.savePassword("gecicsepp")
 // 	console.log(user);
-// 	// await user.images!.add(await services.tmpFile.createFromFilePath(path.join(process.env["PATH_ETC"]!, "patreon-mpu.png"), false))
+// 	// await user.images!.add(await lib.tmpFile.createFromFilePath(path.join(process.env["PATH_ETC"]!, "patreon-mpu.png"), false))
 // 	// user.images!.setMetadata("asdf", {title: "Hello"});
 // 	//
 // 	await user.images!.load();

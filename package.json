@@ -24,6 +24,7 @@
     "minimatch": "^9.0.4",
     "mysql2": "^3.9.3",
     "node-cache": "^5.1.2",
+    "reformdata": "^0.2.2",
     "sharp": "^0.33.3",
     "uni-flatten": "^1.6.2",
     "zod": "^3.22.4"

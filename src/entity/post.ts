@@ -1,6 +1,6 @@
 import {like, sql} from "drizzle-orm";
 import {post} from "./!schema.ts";
-import {services} from "../services/services.ts";
+import {services} from "../lib/services.ts";
 import {Entity} from "../awqrd/storm/entity.ts";
 import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
 import {likeString, stmt} from "../awqrd/storm/tools.ts";
