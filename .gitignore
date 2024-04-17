@@ -1,6 +1,7 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
 # Logs
+var
 
 logs
 _.log
@@ -29,7 +30,7 @@ _.seed
 
 lib-cov
 
-# Coverage directory used by tools like istanbul
+# Coverage directory used by helper like istanbul
 
 coverage
 *.lcov
@@ -98,7 +99,7 @@ web_modules/
 
 .yarn-integrity
 
-# dotenv environment variable files
+# dotenv environment variable storage
 
 .env
 .env.development.local
@@ -120,7 +121,7 @@ out
 .nuxt
 dist
 
-# Gatsby files
+# Gatsby storage
 
 # Comment in the public line in if your project uses Gatsby and not Next.js
 
@@ -136,7 +137,7 @@ dist
 
 .temp
 
-# Docusaurus cache and generated files
+# Docusaurus cache and generated storage
 
 .docusaurus
 
@@ -148,7 +149,7 @@ dist
 
 .fusebox/
 
-# DynamoDB Local files
+# DynamoDB Local storage
 
 .dynamodb/
 
