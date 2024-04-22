@@ -2,7 +2,7 @@ import type {Middleware} from "../../util/pipeline.ts";
 import type {CometState} from "../client/client.ts";
 
 export class RenderMiddleware implements Middleware {
-	async middleware(state: CometState, next: Function) {
+	async handle(state: CometState, next: Function) {
 		try {
 			return state.ctx.json(await next())
 		} catch (e) {

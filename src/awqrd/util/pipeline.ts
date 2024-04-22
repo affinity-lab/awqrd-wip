@@ -1,5 +1,5 @@
 export type MiddlewareFn<T = any> = (state: T, next: () => Promise<any>) => Promise<any>;
-export type Middleware<T = any> = any & { middleware: MiddlewareFn<T>; };
+export type Middleware<T = any> = any & { handle: MiddlewareFn<T>; };
 
 export async function pipeline<STATE = any, RES = any>(
 	state: STATE,
@@ -9,7 +9,7 @@ export async function pipeline<STATE = any, RES = any>(
 	if (middleware === undefined) throw Error('Middleware not found!');
 	let next: () => Promise<any> = () => pipeline(state, ...middlewares);
 	if (typeof middleware === "function") return await middleware(state, next);
-	else if (typeof middleware === "object") return await (middleware as Middleware).middleware(state, next);
+	else if (typeof middleware === "object") return await (middleware as Middleware).handle(state, next);
 	throw new Error("some error occured in pipeline execution")
 }
 

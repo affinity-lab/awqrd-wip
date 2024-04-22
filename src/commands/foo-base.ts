@@ -1,7 +1,6 @@
 import type {Context} from "hono";
 import type {Client} from "../awqrd/comet/client/client.ts";
 import {Comet} from "../awqrd/comet/comet.ts";
-import {clients} from "../lib/clients/clients.ts";
 
 @Comet.Group({
 	name: "foo.base",

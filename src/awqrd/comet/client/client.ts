@@ -31,7 +31,7 @@ export abstract class Client {
 		this.pipeline = new Pipeline(...middlewares, this.execute.bind(this));
 	}
 
-	authApi(apiKey: string | undefined) { return true; }
+	authApi(apiKey: string | undefined) { apiKey; return true; }
 
 	protected async execute(state: CometState) {
 		// todo: create an array of the properties of state from the key of the cmd.params
