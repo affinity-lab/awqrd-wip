@@ -1,6 +1,7 @@
-import {type CometState} from "../awqrd/comet/client/client.ts";
+import type {Context} from "hono";
+import type {Client} from "../awqrd/comet/client/client.ts";
 import {Comet} from "../awqrd/comet/comet.ts";
-
+import {clients} from "../lib/clients/clients.ts";
 
 @Comet.Group({
 	name: "foo.base",
@@ -12,7 +13,13 @@ export class FooBase {
 		xxx: 123,
 		cache: {ttl: 11},
 	})
-	bar(args: { fasz: string }, env: Record<string, any>, files: Record<string, Array<File>>, state: CometState) {
+	bar(
+		@Comet.Args args: { fasz: string },
+		@Comet.Env env: Record<string, any>,
+		@Comet.Files files: Record<string, Array<File>>,
+		@Comet.Ctx ctx: Context,
+		@Comet.Client client: Client
+	) {
 		return {name: args.fasz}
 	}
 }

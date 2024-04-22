@@ -20,9 +20,18 @@ export function readCommands(clients: Record<string, ClientGroup>) {
 			let name = ((group["name"] || store.target.name) + "." + (config["command"][key]["name"] || key)).toLowerCase();
 			let clients = config["command"][key]["clients"] || group["clients"] || allClients;
 
+			let params:string[] = [];
+			if(config["params"] !== undefined) {
+				for (const param in config["params"][key]) {
+					params[parseInt(param)] = config["params"][key][param];
+				}
+			}
+
+			console.log(params)
+
 			clients.forEach((client:Client) => {
 				config["command"][key] = omitFields(config["command"][key], "name", "clients")
-				client.add(name, cometInstance, key, config["command"][key])
+				client.add(name, cometInstance, key, config["command"][key], params)
 			});
 		}
 	})

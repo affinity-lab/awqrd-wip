@@ -7,15 +7,18 @@ import {ValidateMiddleware} from "../../awqrd/comet/middlewares/validate.ts";
 import {services} from "../services.ts";
 import {MobileClient} from "./mobile-client.ts";
 
+let middlewares = [
+	new RenderMiddleware(),
+	new FetchArgsMiddleware(),
+	new PreprocessMiddleware(),
+	new ValidateMiddleware(),
+	new CacheMiddleware(services.responseCache)
+];
+
 export let clients: Record<string, ClientGroup> = {
 	mobile: new ClientGroup(
-		new MobileClient(1, [
-			new RenderMiddleware(),
-			new FetchArgsMiddleware(),
-			new PreprocessMiddleware(),
-			new ValidateMiddleware(),
-			new CacheMiddleware(services.responseCache)
-		]),
+		new MobileClient(1, middlewares),
+		new MobileClient(2, middlewares),
 	),
 	// admin: new ClientGroup(
 	// 	new AdminClient(1)

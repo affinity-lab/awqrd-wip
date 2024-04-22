@@ -6,6 +6,7 @@ type Command<Instance extends Object, MethodName extends keyof Instance> = {
 	key: MethodName, // The name of the method to be executed on the instance
 	config: Record<string, any> // Configuration options for the method execution
 	name: string // The name of the command
+	params: string[] // The names of the parameters that the method accepts
 }
 
 export type CometState = {
@@ -33,12 +34,17 @@ export abstract class Client {
 	authApi(apiKey: string | undefined) { return true; }
 
 	protected async execute(state: CometState) {
-		return state.cmd.instance[state.cmd.key](
-			state.args,
-			state.env,
-			state.files,
-			state
-		);
+		// todo: create an array of the properties of state from the key of the cmd.params
+
+		let args = [];
+		if (state.cmd.params.length === 0) {
+			args.push(state);
+		} else for (let param of state.cmd.params) {
+			args.push(state[param as keyof CometState])
+		}
+
+
+		return state.cmd.instance[state.cmd.key](...args);
 	}
 
 	async resolve(command: string, ctx: Context) {
@@ -46,8 +52,8 @@ export abstract class Client {
 		return await this.pipeline.run({ctx, args: {}, cmd, client: this, env: {}, id: this.id + "." + command, files: {}});
 	}
 
-	add(name: string, instance: any, key: string, config: Record<string, any>) {
+	add(name: string, instance: any, key: string, config: Record<string, any>, params: string[]) {
 		if (this.#commands[name] !== undefined) throw Error(`Parse error: DUPLICATE COMMAND ${name}`);
-		this.#commands[name] = {instance, key, config, name};
+		this.#commands[name] = {instance, key, config, name, params};
 	}
 }
