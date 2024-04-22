@@ -8,14 +8,14 @@ type Command<Instance extends Object, MethodName extends keyof Instance> = {
 	name: string // The name of the command
 }
 
-export type State = {
-	id: string
-	ctx: Context
+export type CometState = {
 	args: Record<string, any>
-	cmd: Command<any, any>
-	client: Client
 	env: Record<string, any>
 	files: Record<string, Array<File>>
+	id: string
+	ctx: Context
+	cmd: Command<any, any>
+	client: Client
 }
 
 export abstract class Client {
@@ -32,7 +32,14 @@ export abstract class Client {
 
 	authApi(apiKey: string | undefined) { return true; }
 
-	protected async execute(state: State) { return state.cmd.instance[state.cmd.key](state.args, state.env, state.ctx, this); }
+	protected async execute(state: CometState) {
+		return state.cmd.instance[state.cmd.key](
+			state.args,
+			state.env,
+			state.files,
+			state
+		);
+	}
 
 	async resolve(command: string, ctx: Context) {
 		let cmd = this.#commands[command];

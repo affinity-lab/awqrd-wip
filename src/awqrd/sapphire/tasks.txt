@@ -1,0 +1,22 @@
+form-adapter,
+list-adapter,
+
+file kezelés
+
+sapphire-com
+
+endpoints
+- list
+- form
+- save
+- delete
+- file
+- collection
+- changefiledata
+- deletefiledata
+- changefileorder
+
+tag
+- rename / merge
+- get (by group)
+

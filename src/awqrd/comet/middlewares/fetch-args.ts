@@ -1,10 +1,10 @@
 import {reform} from "reformdata";
 import type {Middleware} from "../../util/pipeline.ts";
-import type {State} from "../client/client.ts";
+import type {CometState} from "../client/client.ts";
 import {cometError} from "../error.ts";
 
 export class FetchArgsMiddleware implements Middleware {
-	async middleware(state: State, next: Function) {
+	async middleware(state: CometState, next: Function) {
 		let contentType = state.ctx.req.header("Content-type");
 
 		if (contentType === "application/json") {
