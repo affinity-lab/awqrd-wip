@@ -1,5 +1,5 @@
+import {omitFieldsIP, pickFieldsIP} from "../util/object.ts";
 import {type MaybeUnset} from "../util/types.ts";
-import {pickFieldsIP, omitFieldsIP} from "./tools.ts";
 
 /**
  * Class representing a storm entity.

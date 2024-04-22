@@ -1,4 +1,4 @@
-import {omitFields} from "../storm/tools.ts";
+import {omitFields} from "../util/object.ts";
 import type {ClientGroup} from "./client/client-group.ts";
 import type {Client} from "./client/client.ts";
 import {Comet} from "./comet.ts";

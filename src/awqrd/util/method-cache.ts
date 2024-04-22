@@ -6,7 +6,7 @@ import {Cache} from "./cache/cache.ts";
  * @param {Cache} cacheService - The cache service to use for storing and retrieving cached values
  * @returns {MethodDecorator} - The method decorator function
  */
-export function methodCacheFactory(cacheService: Cache) {
+export function methodCacheFactory(cacheService: Cache): (ttl: number) => MethodDecorator {
 	/**
 	 * Method decorator that caches the result of the decorated method
 	 * @param {number} ttl - Time-to-live for the cached value in milliseconds

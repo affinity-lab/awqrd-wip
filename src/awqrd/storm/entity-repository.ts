@@ -2,11 +2,12 @@ import {sql} from "drizzle-orm";
 import {MySqlTable} from "drizzle-orm/mysql-core";
 import type {MySql2Database, MySqlRawQueryResult} from "drizzle-orm/mysql2";
 import {MaterializeIt} from "../util/materialize-it.ts";
+import {firstOrUndefined, omitFieldsIP, pickFieldsIP} from "../util/object.ts";
 import {ProcessPipeline, type State} from "../util/process-pipeline.ts";
 import type {MaybePromise, MaybeUndefined, MaybeUnset} from "../util/types.ts";
 import type {IEntityRepository} from "./entity-repository-interface.ts";
 import {Entity} from "./entity.ts";
-import {firstOrUndefined, omitFieldsIP, pickFieldsIP, stmt} from "./tools.ts";
+import {stmt} from "./helper.ts";
 import type {Dto, Item, WithId, WithIds} from "./types.ts";
 
 
@@ -55,7 +56,9 @@ export class EntityRepository<
 			action: (async (state: State) => {
 				if (state.dto === undefined) state.dto = await this.stmt_get({id: state.id})
 			}),
-			finalize: (async (state: State) => { if (state.dto !== undefined) state.item = await this.instantiate(state.dto);})
+			finalize: (async (state: State) => {
+				if (state.dto !== undefined) state.item = await this.instantiate(state.dto)
+			})
 		}),
 		getAll: new ProcessPipeline("prepare", "action", "finalize").setup({
 			action: (async (state: State) => {
