@@ -1,4 +1,4 @@
-import {blank} from "./!schema.ts";
+import {blank} from "./+schema.ts";
 import {services} from "../lib/services.ts";
 import {Entity} from "../awqrd/storm/entity.ts";
 import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
@@ -18,4 +18,3 @@ export class Blank extends Entity implements Partial<Dto<typeof blank>> {}
 let repository = new BlankRepository(services.connection, blank, Blank);
 
 export {repository as blankRepository}
-

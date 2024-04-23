@@ -9,8 +9,8 @@ import {CacheWithNodeCache} from "../awqrd/util/cache/cache-with-node-cache.ts";
 import {TmpFileFactory} from "../awqrd/util/fs/tmp-file.ts";
 import {MaterializeIt} from "../awqrd/util/materialize-it";
 import {methodCacheFactory} from "../awqrd/util/method-cache.ts";
-import * as schema from "../entity/!schema.ts";
-import {storage} from "../entity/!schema.ts";
+import * as schema from "../entity/+schema.ts";
+import {storage} from "../entity/+schema.ts";
 
 class Services {
 	@MaterializeIt get migrator() {

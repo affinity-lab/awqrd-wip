@@ -3,7 +3,7 @@ import NodeCache from "node-cache";
 import {z} from "zod";
 import {likeString, stmt} from "../awqrd/storm/helper.ts";
 import {omitFieldsIP} from "../awqrd/util/object.ts";
-import {user} from "./!schema.ts";
+import {user} from "./+schema.ts";
 import {services} from "../lib/services.ts";
 import {Entity} from "../awqrd/storm/entity.ts";
 import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
