@@ -1,9 +1,12 @@
+import {loadModuleDefaultExports} from "../util/load-module-default-exports.ts";
 import {omitFields} from "../util/object.ts";
 import type {ClientGroup} from "./client/client-group.ts";
 import type {Client} from "./client/client.ts";
 import {Comet} from "./comet.ts";
 
-export function readCommands(clients: Record<string, ClientGroup>) {
+export function readCommands(commandsPath: string, clients: Record<string, ClientGroup>) {
+
+	loadModuleDefaultExports(commandsPath);
 
 	let allClients = [];
 	for (const key in clients) allClients.push(...clients[key].all());

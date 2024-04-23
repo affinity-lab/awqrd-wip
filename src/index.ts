@@ -1,23 +1,28 @@
 console.log("\n\n💥💥💥 ST0RM ###########################################################")
-import type {Context} from "hono";
+import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
+import path from "path";
 import {getClient} from "./awqrd/comet/client/get-client.ts";
 import {recognizeClient} from "./awqrd/comet/client/recognize-client.ts";
+import {readCommands} from "./awqrd/comet/read-commands.ts";
 import {stormImgServerHono} from "./awqrd/storm-plugins/storage-extensions/image/storage-img-server.ts";
 import {stormStorageServerHono} from "./awqrd/storm-plugins/storage/helper/storm-storage-server.ts";
-import {bootSequence} from "./lib/boot-sequence.ts";
 import {clients} from "./lib/clients/clients.ts";
+import {services} from "./lib/services.ts";
 
 
-let {app} = await bootSequence()
-app.use(logger())
+await services.migrator();
+readCommands(path.resolve(__dirname, "commands/"), clients);
+
+const app = new Hono();
+app.use(logger());
 
 stormStorageServerHono(app, process.env["PATH_FILES"]!, process.env["URL_FILES_PREFIX"]!);
 stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX"]!, process.env["PATH_FILES"]!, true)
 
 app.post('/api/:command',
 	recognizeClient,
-	async (ctx: Context<Record<string, any>>, next) => {
+	async (ctx: Context<Record<string, any>>) => {
 		let {name, version, apiKey}: { name: string, version: number, apiKey: string } = ctx.get("comet-client");
 		let client = getClient(clients, name, version, apiKey);
 		return client.resolve(ctx.req.param("command"), ctx);
