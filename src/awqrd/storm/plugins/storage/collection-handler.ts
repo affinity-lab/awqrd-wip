@@ -1,5 +1,5 @@
 import {minimatch} from "minimatch";
-import type {IEntity} from "../../storm/types.ts";
+import type {IEntity} from "../../types.ts";
 import type {Attachment} from "./attachment.ts";
 import {Collection} from "./collection.ts";
 import type {TmpFile} from "./helper/types.ts";
@@ -27,11 +27,12 @@ export class CollectionHandler<METADATA extends Record<string, any>> extends Arr
 	pop(): never { throw Error(`can not pop from collection handler ${this.collection.name}`);}
 	shift(): never { throw Error(`can not shift from collection handler ${this.collection.name}`);}
 
-	public async load(): Promise<void> {
+	public async load(): Promise<this> {
 		// todo: make proper update instead of this
 		this.loaded = true;
 		this.length = 0;
-		super.push(...(await this.collection.get(this.entity.id!)))
+		super.push(...(await this.collection.get(this.entity.id!)));
+		return this;
 	}
 
 	async add(file: TmpFile) {

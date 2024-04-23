@@ -1,4 +1,4 @@
-import type {Middleware} from "../../util/pipeline.ts";
+import type {Middleware} from "@affinity-lab/awqrd-util/pipeline.ts";
 import type {CometState} from "../client/client.ts";
 
 export class PreprocessMiddleware implements Middleware {

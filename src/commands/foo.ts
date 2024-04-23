@@ -1,14 +1,14 @@
+import type {CometState} from "@affinity-lab/awqrd-comet/client/client.ts";
+import {Comet} from "@affinity-lab/awqrd-comet/comet.ts";
+import {cometError} from "@affinity-lab/awqrd-comet/error.ts";
 import {z} from "zod";
-import type {CometState} from "../awqrd/comet/client/client.ts";
-import {Comet} from "../awqrd/comet/comet.ts";
-import {cometError} from "../awqrd/comet/error.ts";
 import {FooBase} from "./foo-base.ts";
 
-function auth(state:CometState){
+function auth(state: CometState) {
 	state.env.user = "elvis presley"
 }
-function allowOnlyIfUserExists(state:CometState){
-	if(!state.env.user) throw cometError.unauthorized()
+function allowOnlyIfUserExists(state: CometState) {
+	if (!state.env.user) throw cometError.unauthorized()
 }
 
 @Comet.Group({name: "foo"})

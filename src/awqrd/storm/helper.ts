@@ -1,6 +1,7 @@
-import {sql} from "drizzle-orm";
+import {eq, sql} from "drizzle-orm";
 import {int, MySqlColumn} from "drizzle-orm/mysql-core";
 import type {MySqlSelectWithout} from "drizzle-orm/mysql-core/query-builders/select.types";
+import {EntityRepository} from "./entity-repository.ts";
 
 /**
  * Generates a definition for an auto-incrementing primary key column named 'id' in a MySQL database.
@@ -40,6 +41,7 @@ export function In(col: MySqlColumn, ids: string) { return sql`${col} in (${sql.
 export function stmt<ARGS = Record<string, any>, RES = any>(stmt: MySqlSelectWithout<any, any, any>, ...processes: ((res: any) => any)[]
 ) {
 	let prepared = stmt.prepare();
+
 	return async (args: ARGS) => {
 		let result = await prepared.execute(args);
 		for (const process of processes) result = await process(result);
@@ -69,3 +71,18 @@ export const likeString = {
 	 */
 	contains: (search: string) => "%" + search + "%",
 };
+
+export function getByFactory
+<T extends string | number, R>
+(repo: EntityRepository<any, any, any>, field: MySqlColumn):
+	(search: T) => Promise<R | undefined>
+{
+	let stmt = repo.db.select().from(repo.schema).where(eq(field, sql.placeholder("search"))).prepare();
+	let fn = async (search: T) => {
+		let data = await stmt.execute({search})
+		if (data.length === 0) return undefined;
+		else return await repo.instantiate(data[0]) as R;
+	};
+	(fn as unknown as {stmt:any}).stmt = stmt;
+	return fn;
+}

@@ -1,12 +1,13 @@
-import {omitFieldsIP, pickFieldsIP} from "../util/object.ts";
-import {type MaybeUnset} from "../util/types.ts";
+import {omitFieldsIP, pickFieldsIP} from "@affinity-lab/awqrd-util/object.ts";
+import {type MaybeUnset} from "@affinity-lab/awqrd-util/types.ts";
+import {Export} from "./export.ts";
 
 /**
  * Class representing a storm entity.
  */
 export class Entity {
 	/** The ID of the entity. */
-	declare id: MaybeUnset<number>;
+	@Export declare id: MaybeUnset<number>;
 
 	$export() {
 		const e: Record<string, any> = {}

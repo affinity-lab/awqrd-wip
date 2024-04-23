@@ -1,4 +1,4 @@
-import type {NumericString} from "../../../util/types.ts";
+import type {NumericString} from "@affinity-lab/awqrd-util/types.ts";
 
 export type FileSizeWithUnit =
 	`${number}KB` | `${number}kb` | `${number}kB` |

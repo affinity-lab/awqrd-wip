@@ -1,10 +1,10 @@
 import {sql} from "drizzle-orm";
 import {MySqlTable} from "drizzle-orm/mysql-core";
 import type {MySql2Database, MySqlRawQueryResult} from "drizzle-orm/mysql2";
-import {MaterializeIt} from "../util/materialize-it.ts";
-import {firstOrUndefined, omitFieldsIP, pickFieldsIP} from "../util/object.ts";
-import {ProcessPipeline, type State} from "../util/process-pipeline.ts";
-import type {MaybePromise, MaybeUndefined, MaybeUnset} from "../util/types.ts";
+import {MaterializeIt} from "@affinity-lab/awqrd-util/materialize-it.ts";
+import {firstOrUndefined, omitFieldsIP, pickFieldsIP} from "@affinity-lab/awqrd-util/object.ts";
+import {ProcessPipeline, type State} from "@affinity-lab/awqrd-util/process-pipeline.ts";
+import type {MaybePromise, MaybeUndefined, MaybeUnset} from "@affinity-lab/awqrd-util/types.ts";
 import type {IEntityRepository} from "./entity-repository-interface.ts";
 import {Entity} from "./entity.ts";
 import {stmt} from "./helper.ts";
@@ -124,7 +124,7 @@ export class EntityRepository<
 	 * @param dtoSet - An array of DTOs.
 	 * @returns An array of instantiated items.
 	 */
-	protected async instantiateAll(dtoSet: Array<Record<string, any>>): Promise<Array<Item<ENTITY>>> {
+	public async instantiateAll(dtoSet: Array<Record<string, any>>): Promise<Array<Item<ENTITY>>> {
 		const instances = [];
 		for (let dto of dtoSet) {
 			let instance = await this.instantiate(dto as Dto<SCHEMA>);
@@ -138,19 +138,25 @@ export class EntityRepository<
 	 * @param dtoSet - An array of DTOs.
 	 * @returns The instantiated item, or undefined if the array is blank.
 	 */
-	protected async instantiateFirst(dtoSet: Array<Record<string, any>>): Promise<MaybeUndefined<Item<ENTITY>>> { return this.instantiate(firstOrUndefined(dtoSet));}
+	public async instantiateFirst(dtoSet: Array<Record<string, any>>): Promise<MaybeUndefined<Item<ENTITY>>> { return this.instantiate(firstOrUndefined(dtoSet));}
 
 	/**
 	 * Instantiates an item from a DTO.
 	 * @param dto - The DTO.
 	 * @returns The instantiated item, or undefined if the DTO is undefined.
 	 */
-	protected async instantiate(dto: Dto<SCHEMA> | undefined): Promise<MaybeUndefined<Item<ENTITY>>> {
+	public async instantiate(dto: Dto<SCHEMA> | undefined): Promise<MaybeUndefined<Item<ENTITY>>> {
 		if (dto === undefined) return undefined;
 		let item = await this.create();
 		await this.applyItemDTO(item, dto);
 		return item;
 	}
+
+	public instantiators = {
+		all: (res: any) => this.instantiateAll(res),
+		first: (res: any) => this.instantiateFirst(res),
+	}
+
 
 //endregion
 

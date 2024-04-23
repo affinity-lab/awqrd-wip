@@ -1,6 +1,6 @@
 import {z} from "zod";
-import type {State} from "../../util/process-pipeline.ts";
-import {EntityRepository} from "../../storm/entity-repository.ts";
+import type {State} from "@affinity-lab/awqrd-util/process-pipeline.ts";
+import {EntityRepository} from "../../entity-repository.ts";
 
 /**
  * A description of the entire function.

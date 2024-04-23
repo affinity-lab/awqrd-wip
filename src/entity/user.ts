@@ -1,22 +1,27 @@
+import {EntityRepository} from "@affinity-lab/awqrd-storm/entity-repository.ts";
+import {Entity} from "@affinity-lab/awqrd-storm/entity.ts";
+import {Export} from "@affinity-lab/awqrd-storm/export.ts";
+import {likeString, stmt} from "@affinity-lab/awqrd-storm/helper.ts";
+import {cachePlugin} from "@affinity-lab/awqrd-storm/plugins/cache/cache-plugin.ts";
+import {cachedGetByFactory} from "@affinity-lab/awqrd-storm/plugins/cache/cached-get-by-factory.ts";
+import {resultCacheFactory} from "@affinity-lab/awqrd-storm/plugins/cache/result-cache-factory.ts";
+import {ImageCollection} from "@affinity-lab/awqrd-storm/plugins/storage-extensions/image/image-collection.ts";
+import {validatorPlugin} from "@affinity-lab/awqrd-storm/plugins/validator/validator-plugin.ts";
+import type {Dto} from "@affinity-lab/awqrd-storm/types.ts";
+import {CacheWithNodeCache} from "@affinity-lab/awqrd-util/cache/cache-with-node-cache.ts";
+import {MaterializeIfDefined, MaterializeIt} from "@affinity-lab/awqrd-util/materialize-it";
+import {omitFieldsIP} from "@affinity-lab/awqrd-util/object.ts";
+import type {MaybeNull} from "@affinity-lab/awqrd-util/types";
 import {like, sql} from "drizzle-orm";
-import NodeCache from "node-cache";
 import {z} from "zod";
-import {likeString, stmt} from "../awqrd/storm/helper.ts";
-import {omitFieldsIP} from "../awqrd/util/object.ts";
-import {user} from "./+schema.ts";
 import {services} from "../lib/services.ts";
-import {Entity} from "../awqrd/storm/entity.ts";
-import {EntityRepository} from "../awqrd/storm/entity-repository.ts";
-import {Export} from "../awqrd/storm/export.ts";
+import {user} from "./+schema.ts";
 import {BasicCollection} from "./collection-types/basic-collection.ts";
 import {DocumentCollection} from "./collection-types/document-collection.ts";
-import {ImageCollection} from "../awqrd/storm-plugins/storage-extensions/image/image-collection.ts";
-import {cachePlugin} from "../awqrd/storm-plugins/cache/cache-plugin.ts";
-import {validatorPlugin} from "../awqrd/storm-plugins/validator/validator-plugin.ts";
-import type {Dto, Item} from "../awqrd/storm/types.ts";
-import {CacheWithNodeCache} from "../awqrd/util/cache/cache-with-node-cache.ts";
-import {MaterializeIfDefined, MaterializeIt} from "../awqrd/util/materialize-it";
-import type {MaybeNull} from "../awqrd/util/types";
+
+let cache = new CacheWithNodeCache(services.entityCache, 30, 'user');
+let mapCache = new CacheWithNodeCache(services.entityCache, 30, 'user.map');
+let resultCache = resultCacheFactory(cache, mapCache, "email")
 
 
 class UserRepository<
@@ -25,7 +30,7 @@ class UserRepository<
 	ENTITY extends typeof User
 > extends EntityRepository<DB, SCHEMA, ENTITY> {
 	initialize() {
-		cachePlugin(this, new CacheWithNodeCache(new NodeCache(), 30, 'user'));
+		cachePlugin(this, cache, resultCache);
 		validatorPlugin(this, z.object({
 			name: z.string().min(3)
 		}));
@@ -34,15 +39,19 @@ class UserRepository<
 	@MaterializeIt
 	private get stmt_find() {
 		return stmt<{ search: string }, Array<User>>(
-			this.db.select().from(this.schema).where(like(user.name, sql.placeholder("search")))
+			this.db.select().from(this.schema).where(like(user.name, sql.placeholder("search"))),
+			resultCache,
+			this.instantiators.all
 		)
 	}
 
-	async find(search: string): Promise<Array<Item<ENTITY>>> {
-		return search === "" ? [] :
-			await this.stmt_find({search: likeString.contains(search)})
-				.then((res) => this.instantiateAll(res))
+	async find(search: string): Promise<Array<User>> {
+		return search === "" ? [] : await this.stmt_find({search: likeString.contains(search)})
 	}
+
+
+	getByEmail = cachedGetByFactory<string, User>(this, "email", resultCache, mapCache)
+
 
 	protected transformSaveDTO(dto: Dto<SCHEMA>) {
 		super.transformSaveDTO(dto);
@@ -66,9 +75,7 @@ export class User extends Entity implements Partial<Dto<typeof user>> {
 	@Export @MaterializeIfDefined get general() {return generalCollection.handler(this)}
 
 	@services.MethodCache(3)
-	async q(){
-		return new Date();
-	}
+	async q(arg: number) { return new Date();}
 }
 
 

@@ -1,5 +1,5 @@
-import {FileDescriptor} from "../../../util/fs/file-descriptor.ts";
-import type {IEntityRepository} from "../../../storm/entity-repository-interface.ts";
+import {FileDescriptor} from "@affinity-lab/awqrd-util/fs/file-descriptor.ts";
+import type {IEntityRepository} from "../../../entity-repository-interface.ts";
 import {Collection} from "../../storage/collection.ts";
 import {type CollectionOptions, type MetaField, type TmpFile} from "../../storage/helper/types.ts";
 import type {Storage} from "../../storage/storage.ts";

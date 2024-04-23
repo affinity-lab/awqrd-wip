@@ -19,6 +19,12 @@
 - rename / merge
 - get (by group)
 
+# Storm Cache Plugin
+- [ ] mapCache invalidation
+- [ ] mapCache autofill
+
+or remove mapCache at all if not possible
+
 # Storm Tag Plugin
 - [ ] schema factory
 - [ ] abstract tag repo

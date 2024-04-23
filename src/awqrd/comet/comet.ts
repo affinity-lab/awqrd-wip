@@ -1,4 +1,4 @@
-import {ClassMetaData} from "../util/class-meta-data.ts";
+import {ClassMetaData} from "@affinity-lab/awqrd-util/class-meta-data.ts";
 import {Client} from "./client/client.ts";
 
 type CometGroupConfig = {

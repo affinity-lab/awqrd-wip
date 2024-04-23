@@ -1,5 +1,5 @@
 import type {Context} from "hono";
-import {type Middleware, type MiddlewareFn, Pipeline} from "../../util/pipeline.ts";
+import {type Middleware, type MiddlewareFn, Pipeline} from "@affinity-lab/awqrd-util/pipeline.ts";
 
 type Command<Instance extends Object, MethodName extends keyof Instance> = {
 	instance: Instance, // The object that contains the method to be executed

@@ -1,15 +1,21 @@
-import type {Cache} from "../../util/cache/cache.ts";
-import type {State} from "../../util/process-pipeline.ts";
-import {EntityRepository} from "../../storm/entity-repository.ts";
+import {EntityRepository} from "../../entity-repository.ts";
+import type {Cache} from "@affinity-lab/awqrd-util/cache/cache.ts";
+import type {State} from "@affinity-lab/awqrd-util/process-pipeline.ts";
+import {resultCacheFactory, type ResultCacheFn} from "./result-cache-factory.ts";
 
-export function cachePlugin(repository: EntityRepository<any, any, any>, cache: Cache) {
+export function cachePlugin(repository: EntityRepository<any, any, any>, cache: Cache, resultCache?: ResultCacheFn) {
+
+	if (resultCache === undefined) resultCache = resultCacheFactory(cache);
 
 	repository.pipelines.getOne.blocks
 		.prepare.append(async (state: Record<string, any>) => {
 			state.dto = await cache.get(state.id);
 		})
 		.finalize.prepend(async (state: Record<string, any>) => {
-			if (state.dto !== undefined) await cache.set({key: state.id, value: state.dto})
+			if (state.dto !== undefined){
+				await resultCache(state.dto)
+				//await cache.set({key: state.id, value: state.dto})
+			}
 		}
 	)
 
@@ -20,7 +26,8 @@ export function cachePlugin(repository: EntityRepository<any, any, any>, cache: 
 			state.ids = state.ids.filter(num => !dtoIds.includes(num));
 		})
 		.finalize.prepend(async (state: State<{ dtos: Array<{ id: number }> }>) => {
-			await cache.set(state.dtos.map(dto => {return {key: dto.id, value: dto} }))
+			await resultCache(state.dtos);
+			// await cache.set(state.dtos.map(dto => {return {key: dto.id, value: dto} }))
 		}
 	)
 

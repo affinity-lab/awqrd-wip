@@ -1,14 +1,14 @@
+import {imgCleanupFactory} from "@affinity-lab/awqrd-storm/plugins/storage-extensions/image/img-cleanup.ts";
+import {Storage} from "@affinity-lab/awqrd-storm/plugins/storage/storage.ts";
+import {CacheWithNodeCache} from "@affinity-lab/awqrd-util/cache/cache-with-node-cache.ts";
+import {TmpFileFactory} from "@affinity-lab/awqrd-util/fs/tmp-file.ts";
+import {MaterializeIt} from "@affinity-lab/awqrd-util/materialize-it.ts";
+import {methodCacheFactory} from "@affinity-lab/awqrd-util/method-cache.ts";
 import {drizzle} from "drizzle-orm/mysql2";
 import {migrate} from "drizzle-orm/mysql2/migrator";
 import {createPool} from "mysql2/promise";
 import NodeCache from "node-cache";
 import process from "process";
-import {imgCleanupFactory} from "../awqrd/storm-plugins/storage-extensions/image/img-cleanup.ts";
-import {Storage} from "../awqrd/storm-plugins/storage/storage.ts";
-import {CacheWithNodeCache} from "../awqrd/util/cache/cache-with-node-cache.ts";
-import {TmpFileFactory} from "../awqrd/util/fs/tmp-file.ts";
-import {MaterializeIt} from "../awqrd/util/materialize-it";
-import {methodCacheFactory} from "../awqrd/util/method-cache.ts";
 import * as schema from "../entity/+schema.ts";
 import {storage} from "../entity/+schema.ts";
 
@@ -35,6 +35,10 @@ class Services {
 
 	@MaterializeIt get responseCache() {
 		return new CacheWithNodeCache(new NodeCache(), 60)
+	}
+
+	@MaterializeIt get entityCache() {
+		return new NodeCache();
 	}
 
 

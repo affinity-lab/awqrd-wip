@@ -1,5 +1,5 @@
-import type {State} from "../../../util/process-pipeline.ts";
-import {EntityRepository} from "../../../storm/entity-repository.ts";
+import type {State} from "@affinity-lab/awqrd-util/process-pipeline.ts";
+import {EntityRepository} from "../../../entity-repository.ts";
 import {Storage} from "../storage.ts";
 
 export function storagePlugin(repository: EntityRepository<any, any, any>, storage: Storage) {

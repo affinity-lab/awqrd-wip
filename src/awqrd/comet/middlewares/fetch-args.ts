@@ -1,5 +1,5 @@
 import {reform} from "reformdata";
-import type {Middleware} from "../../util/pipeline.ts";
+import type {Middleware} from "@affinity-lab/awqrd-util/pipeline.ts";
 import type {CometState} from "../client/client.ts";
 import {cometError} from "../error.ts";
 
