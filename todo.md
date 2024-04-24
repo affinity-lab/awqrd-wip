@@ -20,10 +20,8 @@
 - get (by group)
 
 # Storm Cache Plugin
-- [ ] mapCache invalidation
-- [ ] mapCache autofill
-
-or remove mapCache at all if not possible
+- [x] mapCache invalidation
+- [x] mapCache autofill
 
 # Storm Tag Plugin
 - [ ] schema factory
@@ -31,7 +29,7 @@ or remove mapCache at all if not possible
 - [ ] plugin
 
 # Storm cached getBy
-- [ ] Make cacheable getBy methods in Storm
+- [x] Make cacheable getBy methods in Storm
 
 # Storm storage testing
 - [ ] Test storage methods in Storm

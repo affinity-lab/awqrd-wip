@@ -30,8 +30,6 @@ export function readCommands(commandsPath: string, clients: Record<string, Clien
 				}
 			}
 
-			console.log(params)
-
 			clients.forEach((client:Client) => {
 				config["command"][key] = omitFields(config["command"][key], "name", "clients")
 				client.add(name, cometInstance, key, config["command"][key], params)

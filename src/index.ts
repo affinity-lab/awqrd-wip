@@ -1,9 +1,9 @@
 console.log("\n\n💥💥💥 ST0RM ###########################################################")
-import {getClient} from "@affinity-lab/awqrd-comet/client/get-client.ts";
-import {recognizeClient} from "@affinity-lab/awqrd-comet/client/recognize-client.ts";
-import {readCommands} from "@affinity-lab/awqrd-comet/read-commands.ts";
-import {stormImgServerHono} from "@affinity-lab/awqrd-storm/plugins/storage-extensions/image/storage-img-server.ts";
-import {stormStorageServerHono} from "@affinity-lab/awqrd-storm/plugins/storage/helper/storm-storage-server.ts";
+import {getClient} from "@affinity-lab/awqrd/comet/client/get-client.ts";
+import {recognizeClient} from "@affinity-lab/awqrd/comet/client/recognize-client.ts";
+import {readCommands} from "@affinity-lab/awqrd/comet/read-commands.ts";
+import {stormImgServerHono} from "@affinity-lab/awqrd/storm/plugins/storage-extensions/image/storage-img-server.ts";
+import {stormStorageServerHono} from "@affinity-lab/awqrd/storm/plugins/storage/helper/storm-storage-server.ts";
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
@@ -27,15 +27,15 @@ let users = await userRepository.find("elvis")
 // console.log(users)
 user = await userRepository.get(16)
 // console.log(user);
-console.log(user!.$export());
+console.log(user!.$pick("name"));
 user = await userRepository.getByEmail("elvis@elvis.hu");
-console.log(user!.$export());
+console.log(user!.$omit("name"));
 user = await userRepository.getByEmail("elvis@elvis.hu");
 console.log(user!.$export());
 // let images = await user!.images!.load()
 // images.findFiles("*.jpg")[0]!.delete();
 
-// console.log(user!.$export());
+ console.log(user!.$export());
 
 app.post('/api/:command',
 	recognizeClient,

@@ -1,8 +1,8 @@
 import {blank} from "./+schema.ts";
 import {services} from "../lib/services.ts";
-import {Entity} from "@affinity-lab/awqrd-storm/entity.ts";
-import {EntityRepository} from "@affinity-lab/awqrd-storm/entity-repository.ts";
-import type {Dto} from "@affinity-lab/awqrd-storm/types.ts";
+import {Entity} from "@affinity-lab/awqrd/storm/entity.ts";
+import {EntityRepository} from "@affinity-lab/awqrd/storm/entity-repository.ts";
+import type {Dto} from "@affinity-lab/awqrd/storm/types.ts";
 
 /**
  *
