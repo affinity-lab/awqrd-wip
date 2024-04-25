@@ -1,5 +1,4 @@
-import {type MetaField} from "@affinity-lab/awqrd/storm/plugins/storage/helper/types.ts";
-import {Collection} from "@affinity-lab/awqrd/storm/plugins/storage/collection.ts";
+import {Collection, type MetaField} from "@affinity-lab/awqrd";
 
 type DocumentCollectionMetadata = { title: string }
 

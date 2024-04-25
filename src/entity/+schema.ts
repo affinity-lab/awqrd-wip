@@ -1,6 +1,6 @@
+import {id, stormStorageSchemaFactory} from "@affinity-lab/awqrd";
 import {char, int, mysqlTable, text, timestamp, varchar} from "drizzle-orm/mysql-core";
-import {stormStorageSchemaFactory} from "@affinity-lab/awqrd/storm/plugins/storage/helper/storm-storage-schema-factory.ts";
-import {id} from "@affinity-lab/awqrd/storm/helper.ts";
+
 
 export const user = mysqlTable("user", {
 	id: id(),

@@ -1,9 +1,6 @@
 console.log("\n\n💥💥💥 ST0RM ###########################################################")
-import {getClient} from "@affinity-lab/awqrd/comet/client/get-client.ts";
-import {recognizeClient} from "@affinity-lab/awqrd/comet/client/recognize-client.ts";
-import {readCommands} from "@affinity-lab/awqrd/comet/read-commands.ts";
-import {stormImgServerHono} from "@affinity-lab/awqrd/storm/plugins/storage-extensions/image/storage-img-server.ts";
-import {stormStorageServerHono} from "@affinity-lab/awqrd/storm/plugins/storage/helper/storm-storage-server.ts";
+
+import {getClient, readCommands, recognizeClient, stormImgServerHono, stormStorageServerHono} from "@affinity-lab/awqrd";
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
@@ -14,6 +11,7 @@ import {services} from "./lib/services.ts";
 
 await services.migrator();
 readCommands(path.resolve(__dirname, "commands/"), clients);
+
 
 const app = new Hono();
 app.use(logger());

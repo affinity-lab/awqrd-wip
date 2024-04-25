@@ -1,9 +1,5 @@
-import {ClientGroup} from "@affinity-lab/awqrd/comet/client/client-group.ts";
-import {CacheMiddleware} from "@affinity-lab/awqrd/comet/middlewares/cache.ts";
-import {FetchArgsMiddleware} from "@affinity-lab/awqrd/comet/middlewares/fetch-args.ts";
-import {PreprocessMiddleware} from "@affinity-lab/awqrd/comet/middlewares/preprocess.ts";
-import {RenderMiddleware} from "@affinity-lab/awqrd/comet/middlewares/render.ts";
-import {ValidateMiddleware} from "@affinity-lab/awqrd/comet/middlewares/validate.ts";
+
+import {CacheMiddleware, ClientGroup, FetchArgsMiddleware, PreprocessMiddleware, RenderMiddleware, ValidateMiddleware} from "@affinity-lab/awqrd";
 import {services} from "../services.ts";
 import {MobileClient} from "./mobile-client.ts";
 

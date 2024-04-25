@@ -1,7 +1,5 @@
-import type {CometState} from "@affinity-lab/awqrd/comet/client/client.ts";
-import {Comet} from "@affinity-lab/awqrd/comet/comet.ts";
-import {cometError} from "@affinity-lab/awqrd/comet/error.ts";
-import {z} from "zod";
+
+import {Comet, cometError, type CometState} from "@affinity-lab/awqrd";
 import {userRepository} from "../entity/user.ts";
 import {FooBase} from "./foo-base.ts";
 
