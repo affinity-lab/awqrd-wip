@@ -1,3 +1,5 @@
+import {tagRepository} from "./entity/tag";
+
 console.log("\n\n💥💥💥 ST0RM ###########################################################")
 import {getClient} from "@affinity-lab/awqrd-comet/client/get-client.ts";
 import {recognizeClient} from "@affinity-lab/awqrd-comet/client/recognize-client.ts";
@@ -7,9 +9,10 @@ import {stormStorageServerHono} from "@affinity-lab/awqrd-storm/plugins/storage/
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
-import {User, userRepository} from "./entity/user.ts";
+import {userRepository} from "./entity/user.ts";
 import {clients} from "./lib/clients/clients.ts";
 import {services} from "./lib/services.ts";
+import {postRepository} from "./entity/post";
 
 
 await services.migrator();
@@ -21,21 +24,42 @@ app.use(logger());
 stormStorageServerHono(app, process.env["PATH_FILES"]!, process.env["URL_FILES_PREFIX"]!);
 stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX"]!, process.env["PATH_FILES"]!, true)
 
-let user: User | undefined;
-
+console.log("--------------------------------------------------------")
+let user;
+// user --------------------------------------
 let users = await userRepository.find("elvis")
 // console.log(users)
-user = await userRepository.get(16)
+user = await userRepository.get(1)!
 // console.log(user);
-console.log(user!.$export());
+// console.log(user!.$export());
 user = await userRepository.getByEmail("elvis@elvis.hu");
-console.log(user!.$export());
+// console.log(user?.$export());
 user = await userRepository.getByEmail("elvis@elvis.hu");
-console.log(user!.$export());
+console.log(user?.$export());
+console.log(user?.$export());
 // let images = await user!.images!.load()
 // images.findFiles("*.jpg")[0]!.delete();
+// user end ----------------------------------
+console.log("--------------------------------------------------------")
+// post --------------------------------------
+let post = await postRepository.create()
+post.title = "test"
+await postRepository.save(post)
+// console.log(post)
+console.log(post.$export())
 
-// console.log(user!.$export());
+// post end ----------------------------------
+console.log("--------------------------------------------------------")
+
+// tag --------------------------------------
+let tag = await tagRepository.create()
+// console.log(tag)
+tag.name = "alma"
+await tagRepository.save(tag)
+// console.log(tag)
+console.log(tag?.$export())
+
+// tag end --------------------------------------
 
 app.post('/api/:command',
 	recognizeClient,

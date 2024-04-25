@@ -81,7 +81,7 @@ export function getByFactory
 	let fn = async (search: T) => {
 		let data = await stmt.execute({search})
 		if (data.length === 0) return undefined;
-		else return await repo.instantiate(data[0]) as R;
+		else return await repo.instantiators.first(data) as R;
 	};
 	(fn as unknown as {stmt:any}).stmt = stmt;
 	return fn;

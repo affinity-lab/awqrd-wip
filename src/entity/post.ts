@@ -7,6 +7,7 @@ import type {MaybeNull} from "@affinity-lab/awqrd-util/types.ts";
 import {like, sql} from "drizzle-orm";
 import {services} from "../lib/services.ts";
 import {post} from "./+schema.ts";
+import {Export} from "@affinity-lab/awqrd-storm/export";
 
 class PostRepository<
 	DB extends typeof services.connection,
@@ -23,7 +24,7 @@ class PostRepository<
 }
 
 export class Post extends Entity implements Partial<Dto<typeof post>> {
-	title: MaybeNull<string> = null
+	@Export title: MaybeNull<string> = null
 	body: MaybeNull<string> = null
 }
 

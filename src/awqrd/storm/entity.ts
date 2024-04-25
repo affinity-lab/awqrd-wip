@@ -1,6 +1,7 @@
 import {omitFieldsIP, pickFieldsIP} from "@affinity-lab/awqrd-util/object.ts";
 import {type MaybeUnset} from "@affinity-lab/awqrd-util/types.ts";
 import {Export} from "./export.ts";
+import {MaterializeIt} from "@affinity-lab/awqrd-util/materialize-it";
 
 /**
  * Class representing a storm entity.
@@ -9,9 +10,15 @@ export class Entity {
 	/** The ID of the entity. */
 	@Export declare id: MaybeUnset<number>;
 
+	@MaterializeIt
+	private get exportFields(): Array<string> | undefined {
+		return Export.metadata.read(this.constructor)?.export;
+	}
+
 	$export() {
 		const e: Record<string, any> = {}
-		for (const key of this.constructor.prototype.export) e[key] = this[key as keyof this];
+		let a = this.exportFields
+		if(a) for (const key of a) e[key] = this[key as keyof this];
 		return e
 	}
 	$pick(...fields: string[]) {

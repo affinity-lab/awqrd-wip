@@ -35,7 +35,7 @@ class MetaDataStore {
 		key = this.key(key);
 		if (!this.records.hasOwnProperty(key)) this.records[key] = new ObjectStore();
 		if (!(this.records[key] instanceof ObjectStore)) throw `Metadata ${key} on ${this.target} type mismatch error!`;
-		this.records[key].value = {...this.records[key], ...value};
+		this.records[key].value = {...(this.records[key].value), ...value};
 	}
 	/**
 	 * Set metadata
@@ -73,9 +73,25 @@ class MetaDataStore {
 export class MetaValue{
 	readonly self: any = undefined;
 	readonly inherited: Array<any> = [];
-	constructor(readonly value: any, self: boolean = false) {
-		if (self) this.self = value;
+	public value: any;
+	constructor(readonly store: ObjectStore | SingleStore | ArrayStore, self: boolean = false) {
+		if(this.store instanceof ArrayStore){
+			this.value = [...store.value];
+			if (self) this.self = [...store.value];
+		}  else if (this.store instanceof ObjectStore) {
+			this.value = {...store.value};
+			if (self) this.self = {...store.value};
+		} else {
+			this.value = store.value;
+			if(self) this.self = store.value;
+		}
+		this.inherited.push(store.value);
+	}
+
+	addInherited(value: any) {
 		this.inherited.push(value);
+		if(this.store instanceof ArrayStore) this.value.push(...value)
+		else if (this.store instanceof ObjectStore) Object.assign(this.value, value);
 	}
 }
 
@@ -109,25 +125,27 @@ export class ClassMetaData {
 	 */
 	read(target: Constructor, options: { flatten?: boolean, simple?: boolean } = {}): undefined | Record<string, any> {
 		options = {...{flatten: false, simple: true}, ...options};
-
-		const result: Record<string, { value: any, self: any, inherited: Array<any> }> = {};
+		console.log("*******************************************")
+		console.log("TARGET", target.name)
+		console.log("*******************************************")
+		const result: Record<string, MetaValue> = {};
 		let store = this.get(target);
 
 		if (store !== undefined) {
 			for (const key in store.records) {
-				result[key] = new MetaValue(store.records[key].value, true);
+				result[key] = new MetaValue(store.records[key], true);
 			}
 		}
 
 		target = Object.getPrototypeOf(target);
-		while (target) {
+		while (target !== Object.prototype) {
 			store = this.get(target);
 			if (store !== undefined) {
 				for (const key in store.records) {
 					if (result.hasOwnProperty(key)) {
-						result[key].inherited.push(store.records[key].value);
+						result[key].addInherited(store.records[key].value);
 					} else {
-						result[key] = new MetaValue(store.records[key].value, false);
+						result[key] = new MetaValue(store.records[key]);
 					}
 				}
 			}

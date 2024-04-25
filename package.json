@@ -5,7 +5,8 @@
   "scripts": {
     "run": "bun run src/index.ts",
     "dev": "bun --watch src/index.ts",
-    "mig": "bunx drizzle-kit generate:mysql"
+    "mig": "bunx drizzle-kit generate:mysql",
+    "gen": "bunx drizzle-kit generate:mysql"
   },
 
   "devDependencies": {

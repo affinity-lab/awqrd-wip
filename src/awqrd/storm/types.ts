@@ -8,6 +8,7 @@ export type WithIds<TYPE = {}> = { ids: Array<number> } & TYPE
 
 export type Dto<SCHEMA extends MySqlTable> = WithIdOptional<InferSelectModel<SCHEMA>>
 export type Item<ENTITY extends new (...args: any) => any> = WithIdOptional<InstanceType<ENTITY>>
+export type GeneralItem<ENTITY extends new (...args: any) => any> = Omit<InstanceType<ENTITY & Record<string, any>>, "id"> & { id: MaybeUnset<number> } & Record<string, any>
 
 export type IEntity = { id: number | undefined | null } & Record<string, any>
 export type IExistingEntity = { id: number} & Record<string, any>
