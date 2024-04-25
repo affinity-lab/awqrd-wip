@@ -1,11 +1,11 @@
-import {CacheWithNodeCache, imgCleanupFactory, MaterializeIt, methodCacheFactory, TmpFileFactory, Storage} from "@affinity-lab/awqrd";
+import {CacheWithNodeCache, imgCleanupFactory, MaterializeIt, methodCacheFactory, Storage, TmpFileFactory} from "@affinity-lab/awqrd";
 import {drizzle} from "drizzle-orm/mysql2";
 import {migrate} from "drizzle-orm/mysql2/migrator";
 import {createPool} from "mysql2/promise";
 import NodeCache from "node-cache";
 import process from "process";
 import * as schema from "../entity/+schema.ts";
-import { storage } from "../entity/+schema.ts";
+import {storage} from "../entity/+schema.ts";
 
 class Services {
 	@MaterializeIt get migrator() {

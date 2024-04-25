@@ -1,4 +1,3 @@
-
 import {Comet, cometError, type CometState} from "@affinity-lab/awqrd";
 import {userRepository} from "../entity/user.ts";
 import {FooBase} from "./foo-base.ts";
@@ -13,7 +12,7 @@ function allowOnlyIfUserExists(state: CometState) {
 @Comet.Group({name: "foo"})
 export class Foo extends FooBase {
 	@Comet.Command({
-		name:"bazzzzz",
+		name: "bazzzzz",
 		preprocess: [
 			auth,
 			allowOnlyIfUserExists,
@@ -27,7 +26,6 @@ export class Foo extends FooBase {
 		let user = await userRepository.get(args.id)
 		return user?.$export();
 	}
-
 
 
 }

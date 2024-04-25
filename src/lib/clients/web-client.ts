@@ -1,3 +1,3 @@
 import {Client} from "@affinity-lab/awqrd";
 
-export class WebClient extends Client{}
+export class WebClient extends Client {}

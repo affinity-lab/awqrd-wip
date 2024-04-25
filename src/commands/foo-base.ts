@@ -23,7 +23,6 @@ export class FooBase {
 	}
 
 
-
 	@Comet.Command({
 		name: "bar",
 		clients: clients.mobile.range(2)

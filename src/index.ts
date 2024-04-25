@@ -22,7 +22,6 @@ stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX
 let user: User | undefined;
 
 
-
 let users = await userRepository.find("elvis")
 // console.log(users)
 user = await userRepository.get(16)
@@ -35,7 +34,7 @@ console.log(user!.$export());
 // let images = await user!.images!.load()
 // images.findFiles("*.jpg")[0]!.delete();
 
- console.log(user!.$export());
+console.log(user!.$export());
 
 app.post('/api/:command',
 	recognizeClient,
