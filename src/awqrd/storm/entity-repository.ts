@@ -8,7 +8,7 @@ import type {MaybePromise, MaybeUndefined, MaybeUnset} from "../util/types.ts";
 import type {IEntityRepository} from "./entity-repository-interface.ts";
 import {Entity} from "./entity.ts";
 import {stmt} from "./helper.ts";
-import type {Dto, GeneralItem, Item, WithId, WithIds} from "./types.ts";
+import type {Dto, Item, WithId, WithIdOptional, WithIds} from "./types.ts";
 import {entityError} from "./error";
 
 
@@ -125,10 +125,10 @@ export class EntityRepository<
 	 * @param dtoSet - An array of DTOs.
 	 * @returns An array of instantiated items.
 	 */
-	protected async instantiateAll<E extends GeneralItem<ENTITY> >(dtoSet: Array<Record<string, any>>): Promise<Array<E>> {
+	protected async instantiateAll<E = Item<ENTITY>>(dtoSet: Array<Record<string, any>>): Promise<Array<E>> {
 		const instances: Array<E> = [];
 		for (let dto of dtoSet) {
-			let instance = await this.instantiate<E>(dto as Dto<SCHEMA>) as E | undefined;
+			let instance = await this.instantiate(dto as Dto<SCHEMA>) as E | undefined;
 			if (instance !== undefined) instances.push(instance)
 		}
 		return instances;
@@ -139,14 +139,14 @@ export class EntityRepository<
 	 * @param dtoSet - An array of DTOs.
 	 * @returns The instantiated item, or undefined if the array is blank.
 	 */
-	protected async instantiateFirst<E extends GeneralItem<ENTITY> = Item<ENTITY>>(dtoSet: Array<Record<string, any>>): Promise<MaybeUndefined<E>> { return await this.instantiate<E>(firstOrUndefined(dtoSet)) as E | undefined;}
+	protected async instantiateFirst<E = Item<ENTITY>>(dtoSet: Array<Record<string, any>>): Promise<MaybeUndefined<E>> { return await this.instantiate(firstOrUndefined(dtoSet)) as E | undefined;}
 
 	/**
 	 * Instantiates an item from a DTO.
 	 * @param dto - The DTO.
 	 * @returns The instantiated item, or undefined if the DTO is undefined.
 	 */
-	protected async instantiate<E extends GeneralItem<ENTITY> = Item<ENTITY>>(dto: Dto<SCHEMA> | undefined): Promise<MaybeUndefined<GeneralItem<ENTITY>>> {
+	protected async instantiate<E extends Item<ENTITY> = Item<ENTITY>>(dto: Dto<SCHEMA> | undefined) {
 		if (dto === undefined) return undefined;
 		let item = await this.create();
 		await this.applyItemDTO(item, dto);
@@ -166,7 +166,7 @@ export class EntityRepository<
 	 * @param item The item to apply the DTO to.
 	 * @param dto The data transfer object (DTO) containing the data to be applied to the item.
 	 */
-	protected async applyItemDTO<E extends GeneralItem<ENTITY> = Item<ENTITY>>(item: E, dto: Dto<SCHEMA>) {
+	protected async applyItemDTO<E extends {} = Item<ENTITY>>(item: E, dto: Dto<SCHEMA>) {
 		this.transformItemDTO(dto);
 		Object.assign(item, dto);
 	}
@@ -268,7 +268,7 @@ export class EntityRepository<
 
 	// async insert(item: Item<ENTITY>) : Promise<number>;
 	// async insert(values: InferInsertModel<SCHEMA>): Promise<number>;
-	async insert<E extends GeneralItem<ENTITY> = Item<ENTITY>>(item: E) {
+	async insert<E extends WithIdOptional<InstanceType<ENTITY>> = Item<ENTITY>>(item: E) { // TODO
 		return this.exec.insert(item)
 	}
 
@@ -302,7 +302,7 @@ export class EntityRepository<
 	 * Creates a blank entity item.
 	 * @returns The created item.
 	 */
-	async create<E extends GeneralItem<ENTITY> = Item<ENTITY>>(): Promise<GeneralItem<ENTITY>> {return new this.entity() as unknown as E}
+	async create<E extends Item<ENTITY> = Item<ENTITY>>(): Promise<E> {return new this.entity() as unknown as E} // TODO
 
 	/**
 	 * Reloads the item by fetching the raw data for the item's ID and applying it.

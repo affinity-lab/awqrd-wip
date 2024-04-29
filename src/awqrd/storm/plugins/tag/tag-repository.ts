@@ -7,11 +7,13 @@ import {stmt} from "../../helper";
 import {and, not, sql, Table} from "drizzle-orm";
 import {tagError} from "./helper/error";
 import type {MaybeArray} from "@affinity-lab/awqrd-util/types";
-import type {Dto, GeneralItem} from "../../types";
+import type {Dto} from "../../types";
 import {type State} from "@affinity-lab/awqrd-util/process-pipeline";
+import {debugLog} from "@affinity-lab/awqrd-storm/error";
 
 type Usage = { "repo": EntityRepository<any, any, any>, "field": string } & Record<string, any>
-type Tag<T extends new (...args: any) => any, FIELDS extends Record<string, any> = {name: string}> = GeneralItem<T & FIELDS>
+// type Tag<T extends new (...args: any) => any, FIELDS extends Record<string, any> = {name: string}> = GeneralItem<T & FIELDS>
+
 // TODO test this, and add groupTags
 export class TagRepository<DB extends MySql2Database<any>, SCHEMA extends MySqlTable, ENTITY extends typeof Entity> extends EntityRepository<DB, SCHEMA, ENTITY> {
 	protected usages: Array<Usage> = []
@@ -22,16 +24,17 @@ export class TagRepository<DB extends MySql2Database<any>, SCHEMA extends MySqlT
 
 	@MaterializeIt
 	private get stmt_getByName() {
-		return stmt<{ names: Array<string> }, Array<Tag<ENTITY>>>(
+		return stmt<{ names: Array<string> }, Array<any>>( // TODO typehint
 			this.db.select().from(this.schema).where(sql`name IN (${sql.placeholder("names")})`)
 		)
 	}
 
-	async getByName(names: Array<string> | string, asArray: boolean = false): Promise<Array<Tag<ENTITY>> | Tag<ENTITY> | undefined> {
+	async getByName(names: Array<string> | string, asArray: boolean = false){ // TODO typehint
 		if(typeof names === "string") names = [names];
+		if(names.length === 0) return asArray ? [] : undefined;
 		let tags = await this.stmt_getByName({names});
-		if(!asArray && tags.length <= 1) return tags[0] as Tag<ENTITY> | undefined;
-		else return tags as Array<Tag<ENTITY>>;
+		if(!asArray && tags.length <= 1) return tags[0];
+		else return tags;
 	}
 
 	public prepare(repository: EntityRepository<any, any, any>, state: State) {
@@ -63,31 +66,38 @@ export class TagRepository<DB extends MySql2Database<any>, SCHEMA extends MySqlT
 	}
 
 	async updateTag(repository: EntityRepository<any, any, any>, state: State) {
+		console.log("-------------------- UPDATE TAG")
 		let {prev, curr} = this.changes(repository, state);
 		await this.addTag(curr.filter(x => !prev.includes(x)));
 		await this.deleteTag(prev.filter(x => !curr.includes(x)));
 	}
 
-	protected async addTag(names: Array<string>): Promise<void> {
-		let items = await this.getByName(names, true).then(r=>(r! as Array<Tag<ENTITY>>).map(i=>i.name))
-		if(items.length === 0) return;
+	protected async addTag(names: Array<string>): Promise<void> { // TODO typehint
+		console.log("-------------------- ADD TAG START:", names);
+		let items = await this.getByName(names, true).then(r=>(r! as Array<any>).map(i=>i.name))
 		let toAdd = names.filter(x => !items.includes(x));
 		for (let tag of toAdd) {
 			let item = (await this.instantiate({name: tag} as unknown as Dto<SCHEMA>))! // TODO this typehint is pretty oof
-			await this.insert<Tag<ENTITY>>(item); // TODO
+			await this.insert(item);
+			debugLog(item.$export());
 		}
+		console.log("-------------------- ADD TAG END");
 	}
 
 	// DELETE ----------------------------------------
 
 	protected async deleteTag(names: Array<string>): Promise<void> {
-		let items = await this.stmt_getByName({names})
+		console.log("-------------------- DELETE TAG START:", names);
+		let items = await this.getByName(names, true)
 		if(items.length === 0) return;
 		await this.deleteItems(items);
+		console.log("-------------------- DELETE TAG END");
 	}
 
-	protected async deleteItems(items: Array<Tag<ENTITY>>) {
+	protected async deleteItems(items: Array<any>) { // TODO typehint
+		console.log("ITEMS", items)
 		for (let item of items) {
+			console.log("ITEM", item)
 			let doDelete = true;
 			for (let usage of this.usages) {
 				let res = await usage.repo.db.select().from(usage.repo.schema).where(sql`FIND_IN_SET(${item.name}, ${usage.repo.schema[usage.field]})`).limit(1).execute();
@@ -142,7 +152,7 @@ export class TagRepository<DB extends MySql2Database<any>, SCHEMA extends MySqlT
 		let n = await this.getByName(newName);
 		let item = Array.isArray(o) ? o[0] : o;
 		if (!n) {
-			(item as Tag<ENTITY> & {name: string}).name = newName // todo typehint
+			item.name = newName // todo typehint
 			await this.update(item)
 		}
 		else await this.delete(item);

@@ -7,3 +7,10 @@ export const entityError = {
 };
 
 preprocessErrorTree(entityError, "STORM_ENTITY");
+
+export function debugLog(s: string | any, lines: boolean = true) {
+	console.log("--------------------------------------------------------");
+	if(typeof s === "string") console.log(`***************** ${s} *****************`);
+	else console.log(s);
+	console.log("--------------------------------------------------------");
+}

@@ -125,9 +125,6 @@ export class ClassMetaData {
 	 */
 	read(target: Constructor, options: { flatten?: boolean, simple?: boolean } = {}): undefined | Record<string, any> {
 		options = {...{flatten: false, simple: true}, ...options};
-		console.log("*******************************************")
-		console.log("TARGET", target.name)
-		console.log("*******************************************")
 		const result: Record<string, MetaValue> = {};
 		let store = this.get(target);
 

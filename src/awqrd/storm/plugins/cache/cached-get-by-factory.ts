@@ -6,8 +6,7 @@ import type {Cache} from "@affinity-lab/awqrd-util/cache/cache.ts";
 import {resultCacheFactory, type ResultCacheFn} from "./result-cache-factory.ts";
 
 export function cachedGetByFactory<T extends string | number, R>(repo: EntityRepository<any, any, any>, fieldName: string, resultCache: ResultCacheFn, mapCache: Cache): (search: T) => Promise<R | undefined> {
-	let field = repo.schema[fieldName]
-	let getBy = getByFactory(repo, field);
+	let getBy = getByFactory(repo, fieldName);
 
 	return async (search: T) => {
 		let key = `<${fieldName}>:${search}`;
@@ -19,7 +18,7 @@ export function cachedGetByFactory<T extends string | number, R>(repo: EntityRep
 		}
 		let res = await (getBy as unknown as { stmt: any }).stmt.execute({search});
 		await resultCache(res)
-		let item = await repo.instantiateFirst(res) as R;
+		let item = await repo.instantiators.first(res) as R;
 		if (item) await mapCache.set({key, value: (item as unknown as WithId).id!});
 		return item;
 	}

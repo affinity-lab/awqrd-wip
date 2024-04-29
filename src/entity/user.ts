@@ -18,6 +18,9 @@ import {services} from "../lib/services.ts";
 import {user} from "./+schema.ts";
 import {BasicCollection} from "./collection-types/basic-collection.ts";
 import {DocumentCollection} from "./collection-types/document-collection.ts";
+import {tagPlugin} from "@affinity-lab/awqrd-storm/plugins/tag/tag-plugin";
+import {tagRepository} from "./tag";
+import {TagRepository} from "@affinity-lab/awqrd-storm/plugins/tag/tag-repository";
 
 let cache = new CacheWithNodeCache(services.entityCache, 30, 'user');
 let mapCache = new CacheWithNodeCache(services.entityCache, 30, 'user.map');
@@ -34,6 +37,7 @@ class UserRepository<
 		validatorPlugin(this, z.object({
 			name: z.string().min(3)
 		}));
+		tagPlugin(this, tagRepository as unknown as TagRepository<any, any, any>, "role") // TODO typehint
 	}
 
 	@MaterializeIt
@@ -66,9 +70,10 @@ class UserRepository<
 
 export class User extends Entity implements Partial<Dto<typeof user>> {
 	async savePassword(password: string) { await repository.overwrite(this, {password})}
-	@Export name: MaybeNull<string> = null
-	@Export email: MaybeNull<string> = null
-	@Export updatedAt: MaybeNull<Date> = null
+	@Export name: MaybeNull<string> = null;
+	@Export email: MaybeNull<string> = null;
+	@Export updatedAt: MaybeNull<Date> = null;
+	@Export role: MaybeNull<string> = null;
 
 	@Export @MaterializeIfDefined get images() {return imgCollection.handler(this)}
 	@Export @MaterializeIfDefined get docs() {return docCollection.handler(this)}

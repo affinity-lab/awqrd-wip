@@ -74,9 +74,10 @@ export const likeString = {
 
 export function getByFactory
 <T extends string | number, R>
-(repo: EntityRepository<any, any, any>, field: MySqlColumn):
+(repo: EntityRepository<any, any, any>, fieldName: string):
 	(search: T) => Promise<R | undefined>
 {
+	let field = repo.schema[fieldName];
 	let stmt = repo.db.select().from(repo.schema).where(eq(field, sql.placeholder("search"))).prepare();
 	let fn = async (search: T) => {
 		let data = await stmt.execute({search})

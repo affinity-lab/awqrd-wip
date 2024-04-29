@@ -8,7 +8,7 @@ import {TagRepository} from "@affinity-lab/awqrd-storm/plugins/tag/tag-repositor
 
 
 
-class TagTest<
+export class TagTestRepository<
 	DB extends typeof services.connection,
 	SCHEMA extends typeof tag,
 	ENTITY extends typeof Tag
@@ -22,5 +22,5 @@ export class Tag extends Entity implements Partial<Dto<typeof tag>> {
 
 
 // EXPORT REPOSITORY ---
-let repository = new TagTest(services.connection, tag, Tag);
+let repository = new TagTestRepository(services.connection, tag, Tag);
 export {repository as tagRepository}

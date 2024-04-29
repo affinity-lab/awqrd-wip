@@ -29,37 +29,40 @@ let user;
 // user --------------------------------------
 let users = await userRepository.find("elvis")
 // console.log(users)
-user = await userRepository.get(1)!
-// console.log(user);
-// console.log(user!.$export());
-user = await userRepository.getByEmail("elvis@elvis.hu");
-// console.log(user?.$export());
-user = await userRepository.getByEmail("elvis@elvis.hu");
+user = await userRepository.get(1)
 console.log(user?.$export());
-console.log(user?.$export());
-// let images = await user!.images!.load()
-// images.findFiles("*.jpg")[0]!.delete();
 // user end ----------------------------------
 console.log("--------------------------------------------------------")
 // post --------------------------------------
-let post = await postRepository.create()
-post.title = "test"
-await postRepository.save(post)
+let post = await postRepository.get(1)
+	// let post = await postRepository.create()
+	// post.title = "test"
+	// await postRepository.save(post)
 // console.log(post)
-console.log(post.$export())
+console.log(post?.$export())
 
 // post end ----------------------------------
 console.log("--------------------------------------------------------")
 
 // tag --------------------------------------
-let tag = await tagRepository.create()
-// console.log(tag)
-tag.name = "alma"
-await tagRepository.save(tag)
+let tag = await tagRepository.get(1)
+	// let tag = await tagRepository.create()
+	// // console.log(tag)
+	// tag.name = "alma"
+	// await tagRepository.save(tag)
 // console.log(tag)
 console.log(tag?.$export())
 
 // tag end --------------------------------------
+
+// testing start --------------------------------------
+
+user!.role = "testTag2";
+// user!.role = "";
+await userRepository.save(user!);
+console.log(user?.$export());
+
+// testing end --------------------------------------
 
 app.post('/api/:command',
 	recognizeClient,
