@@ -1,13 +1,12 @@
-import {type Dto, Entity, EntityRepository, type Item, likeString, MaterializeIt, type MaybeNull, stmt} from "@affinity-lab/awqrd";
+import {type Dto, Entity, type EntityInitiator, EntityRepository, Export, type Item, likeString, MaterializeIt, type MaybeNull, stmt} from "@affinity-lab/awqrd";
 import {like, sql} from "drizzle-orm";
 import {services} from "../lib/services.ts";
 import {post} from "./+schema.ts";
-import {Export} from "@affinity-lab/awqrd-storm/export";
 
 class PostRepository<
 	DB extends typeof services.connection,
 	SCHEMA extends typeof post,
-	ENTITY extends typeof Post
+	ENTITY extends EntityInitiator<ENTITY, typeof Post>
 > extends EntityRepository<DB, SCHEMA, ENTITY> {
 
 	@MaterializeIt

@@ -1,17 +1,13 @@
-import {Entity} from "@affinity-lab/awqrd-storm/entity.ts";
-import {Export} from "@affinity-lab/awqrd-storm/export.ts";
-import type {Dto} from "@affinity-lab/awqrd-storm/types.ts";
-import type {MaybeNull} from "@affinity-lab/awqrd-util/types";
+import type {Dto, EntityInitiator, MaybeNull} from "@affinity-lab/awqrd";
+import {Entity, Export, TagRepository} from "@affinity-lab/awqrd";
 import {services} from "../lib/services.ts";
 import {tag} from "./+schema.ts";
-import {TagRepository} from "@affinity-lab/awqrd-storm/plugins/tag/tag-repository";
-
 
 
 export class TagTestRepository<
 	DB extends typeof services.connection,
 	SCHEMA extends typeof tag,
-	ENTITY extends typeof Tag
+	ENTITY extends EntityInitiator<ENTITY, typeof Tag>
 > extends TagRepository<DB, SCHEMA, ENTITY> {
 
 }

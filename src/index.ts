@@ -1,18 +1,14 @@
-import {tagRepository} from "./entity/tag";
-
-console.log("\n\n💥💥💥 ST0RM ###########################################################")
-import {getClient} from "@affinity-lab/awqrd-comet/client/get-client.ts";
-import {recognizeClient} from "@affinity-lab/awqrd-comet/client/recognize-client.ts";
-import {readCommands} from "@affinity-lab/awqrd-comet/read-commands.ts";
-import {stormImgServerHono} from "@affinity-lab/awqrd-storm/plugins/storage-extensions/image/storage-img-server.ts";
-import {stormStorageServerHono} from "@affinity-lab/awqrd-storm/plugins/storage/helper/storm-storage-server.ts";
+import {getClient, readCommands, recognizeClient, stormImgServerHono, stormStorageServerHono} from "@affinity-lab/awqrd";
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
+import {postRepository} from "./entity/post";
+import {tagRepository} from "./entity/tag";
 import {userRepository} from "./entity/user.ts";
 import {clients} from "./lib/clients/clients.ts";
 import {services} from "./lib/services.ts";
-import {postRepository} from "./entity/post";
+
+console.log("\n\n💥💥💥 ST0RM ###########################################################")
 
 
 await services.migrator();
@@ -35,9 +31,9 @@ console.log(user?.$export());
 console.log("--------------------------------------------------------")
 // post --------------------------------------
 let post = await postRepository.get(1)
-	// let post = await postRepository.create()
-	// post.title = "test"
-	// await postRepository.save(post)
+// let post = await postRepository.create()
+// post.title = "test"
+// await postRepository.save(post)
 // console.log(post)
 console.log(post?.$export())
 
@@ -46,10 +42,10 @@ console.log("--------------------------------------------------------")
 
 // tag --------------------------------------
 let tag = await tagRepository.get(1)
-	// let tag = await tagRepository.create()
-	// // console.log(tag)
-	// tag.name = "alma"
-	// await tagRepository.save(tag)
+// let tag = await tagRepository.create()
+// // console.log(tag)
+// tag.name = "alma"
+// await tagRepository.save(tag)
 // console.log(tag)
 console.log(tag?.$export())
 
@@ -57,7 +53,7 @@ console.log(tag?.$export())
 
 // testing start --------------------------------------
 
-user!.role = "testTag2";
+user!.role = "testTag2,KettesTag";
 // user!.role = "";
 await userRepository.save(user!);
 console.log(user?.$export());

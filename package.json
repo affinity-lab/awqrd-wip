@@ -16,7 +16,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@affinity-lab/awqrd": "github:affinity-lab/awqrd",
+    "@affinity-lab/awqrd": "github:affinity-lab/awqrd#master",
     "@types/mime-types": "^2.1.4",
     "change-case-all": "^2.1.0",
     "drizzle-orm": "^0.30.6",
