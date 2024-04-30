@@ -1,17 +1,22 @@
-console.log("\n\n💥💥💥 ST0RM ###########################################################")
+import {tagRepository} from "./entity/tag";
 
-import {getClient, readCommands, recognizeClient, stormImgServerHono, stormStorageServerHono} from "@affinity-lab/awqrd";
+console.log("\n\n💥💥💥 ST0RM ###########################################################")
+import {getClient} from "@affinity-lab/awqrd-comet/client/get-client.ts";
+import {recognizeClient} from "@affinity-lab/awqrd-comet/client/recognize-client.ts";
+import {readCommands} from "@affinity-lab/awqrd-comet/read-commands.ts";
+import {stormImgServerHono} from "@affinity-lab/awqrd-storm/plugins/storage-extensions/image/storage-img-server.ts";
+import {stormStorageServerHono} from "@affinity-lab/awqrd-storm/plugins/storage/helper/storm-storage-server.ts";
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
-import {User, userRepository} from "./entity/user.ts";
+import {userRepository} from "./entity/user.ts";
 import {clients} from "./lib/clients/clients.ts";
 import {services} from "./lib/services.ts";
+import {postRepository} from "./entity/post";
 
 
 await services.migrator();
 readCommands(path.resolve(__dirname, "commands/"), clients);
-
 
 const app = new Hono();
 app.use(logger());
@@ -19,22 +24,45 @@ app.use(logger());
 stormStorageServerHono(app, process.env["PATH_FILES"]!, process.env["URL_FILES_PREFIX"]!);
 stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX"]!, process.env["PATH_FILES"]!, true)
 
-let user: User | undefined;
-
-
+console.log("--------------------------------------------------------")
+let user;
+// user --------------------------------------
 let users = await userRepository.find("elvis")
 // console.log(users)
-user = await userRepository.get(16)
-// console.log(user);
-console.log(user!.$pick("name"));
-user = await userRepository.getByEmail("elvis@elvis.hu");
-console.log(user!.$omit("name"));
-user = await userRepository.getByEmail("elvis@elvis.hu");
-console.log(user!.$export());
-// let images = await user!.images!.load()
-// images.findFiles("*.jpg")[0]!.delete();
+user = await userRepository.get(1)
+console.log(user?.$export());
+// user end ----------------------------------
+console.log("--------------------------------------------------------")
+// post --------------------------------------
+let post = await postRepository.get(1)
+	// let post = await postRepository.create()
+	// post.title = "test"
+	// await postRepository.save(post)
+// console.log(post)
+console.log(post?.$export())
 
-console.log(user!.$export());
+// post end ----------------------------------
+console.log("--------------------------------------------------------")
+
+// tag --------------------------------------
+let tag = await tagRepository.get(1)
+	// let tag = await tagRepository.create()
+	// // console.log(tag)
+	// tag.name = "alma"
+	// await tagRepository.save(tag)
+// console.log(tag)
+console.log(tag?.$export())
+
+// tag end --------------------------------------
+
+// testing start --------------------------------------
+
+user!.role = "testTag2";
+// user!.role = "";
+await userRepository.save(user!);
+console.log(user?.$export());
+
+// testing end --------------------------------------
 
 app.post('/api/:command',
 	recognizeClient,

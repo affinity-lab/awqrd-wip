@@ -9,7 +9,8 @@ export const user = mysqlTable("user", {
 	sex: varchar("sex", {length: 255}),
 	password: char("password", {length: 255}),
 	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').onUpdateNow()
+	updatedAt: timestamp('updated_at').onUpdateNow(),
+	role: varchar("role", {length: 255})
 });
 
 export const blank = mysqlTable("blank", {
@@ -22,6 +23,11 @@ export const post = mysqlTable("post", {
 	body: text("body"),
 	authorId: int("author_id")
 });
+
+export const tag = mysqlTable("tag", {
+	id: id(),
+	name: varchar("name", {length: 2048})
+})
 
 
 export let storage = stormStorageSchemaFactory()
