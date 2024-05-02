@@ -1,64 +1,21 @@
+dbg.hello();
+
+
 import {getClient, readCommands, recognizeClient, stormImgServerHono, stormStorageServerHono} from "@affinity-lab/awqrd";
 import {type Context, Hono} from "hono";
 import {logger} from "hono/logger";
 import path from "path";
-import {postRepository} from "./entity/post";
-import {tagRepository} from "./entity/tag";
-import {userRepository} from "./entity/user.ts";
 import {clients} from "./lib/clients/clients.ts";
-import {services} from "./lib/services.ts";
-
-console.log("\n\n💥💥💥 ST0RM ###########################################################")
+import {dbg, services} from "./lib/services.ts";
 
 
 await services.migrator();
 readCommands(path.resolve(__dirname, "commands/"), clients);
 
 const app = new Hono();
-app.use(logger());
-
-stormStorageServerHono(app, process.env["PATH_FILES"]!, process.env["URL_FILES_PREFIX"]!);
-stormImgServerHono(app, process.env["PATH_IMG"]!, process.env["URL_IMAGES_PREFIX"]!, process.env["PATH_FILES"]!, true)
-
-console.log("--------------------------------------------------------")
-let user;
-// user --------------------------------------
-let users = await userRepository.find("elvis")
-// console.log(users)
-user = await userRepository.get(1)
-console.log(user?.$export());
-// user end ----------------------------------
-console.log("--------------------------------------------------------")
-// post --------------------------------------
-let post = await postRepository.get(1)
-// let post = await postRepository.create()
-// post.title = "test"
-// await postRepository.save(post)
-// console.log(post)
-console.log(post?.$export())
-
-// post end ----------------------------------
-console.log("--------------------------------------------------------")
-
-// tag --------------------------------------
-let tag = await tagRepository.get(1)
-// let tag = await tagRepository.create()
-// // console.log(tag)
-// tag.name = "alma"
-// await tagRepository.save(tag)
-// console.log(tag)
-console.log(tag?.$export())
-
-// tag end --------------------------------------
-
-// testing start --------------------------------------
-
-user!.role = "testTag2,KettesTag";
-// user!.role = "";
-await userRepository.save(user!);
-console.log(user?.$export());
-
-// testing end --------------------------------------
+app.use(logger(dbg.req));
+stormStorageServerHono(app, services.config.storage.filePath, services.config.storage.fileUrlPrefix);
+stormImgServerHono(app, services.config.storage.imgPath, services.config.storage.imgUrlPrefix, services.config.storage.filePath, true);
 
 app.post('/api/:command',
 	recognizeClient,
@@ -66,13 +23,49 @@ app.post('/api/:command',
 		let {name, version, apiKey}: { name: string, version: number, apiKey: string } = ctx.get("comet-client");
 		let client = getClient(clients, name, version, apiKey);
 		return client.resolve(ctx.req.param("command"), ctx);
-	});
-
+	}
+);
 
 Bun.serve({
 	fetch: app.fetch,
-	port: process.env["PORT"]
+	port: services.config.server.port
 });
+
+
+/*let user;
+ let users = await userRepository.find("elvis")
+ user = await userRepository.get(1)
+ dbg.log(user?.$export());
+ dbg.log("--------------------------------------------------------")
+ let post = await postRepository.get(1)
+ // let post = await postRepository.create()
+ // post.title = "test"
+ // await postRepository.save(post)
+ // console.log(post)
+ dbg.log(post?.$export())
+
+ // post end ----------------------------------
+
+ // tag --------------------------------------
+ let tag = await tagRepository.get(1)
+ // let tag = await tagRepository.create()
+ // // console.log(tag)
+ // tag.name = "alma"
+ // await tagRepository.save(tag)
+ // console.log(tag)
+ dbg.log(tag?.$export())
+
+ // tag end --------------------------------------
+
+ // testing start --------------------------------------
+
+ user!.role = "testTag2,KettesTag";
+ // user!.role = "";
+ await userRepository.save(user!);
+ dbg.log(user?.$export());
+
+ // testing end --------------------------------------
+ */
 
 
 //

@@ -6,43 +6,63 @@ import NodeCache from "node-cache";
 import process from "process";
 import * as schema from "../entity/+schema.ts";
 import {storage} from "../entity/+schema.ts";
+import {DBG} from "@affinity-lab/awqrd";
 
 class Services {
-	@MaterializeIt get migrator() {
-		return async () => migrate(this.connection, {migrationsFolder: process.env["DB_MIGRATIONS"]!});
+
+
+	@MaterializeIt get dbg() { return new DBG(this.config.debug); }
+
+	@MaterializeIt get config() {
+		return {
+			db: {
+				migrationsFolder: process.env.DB_MIGRATIONS!,
+				uri: process.env["DB_URI"]!,
+			},
+			storage: {
+				filePath: process.env.PATH_FILES!,
+				imgPath: process.env.PATH_IMG!,
+				tmpPath: process.env.PATH_TMP!,
+				fileUrlPrefix: process.env.URL_FILES_PREFIX!,
+				imgUrlPrefix: process.env.URL_IMAGES_PREFIX!,
+			},
+			server: {
+				port: process.env.port!
+			},
+			debug: {
+				console: {
+					dbg: process.env.DEBUG_DBG_CONSOLE === "yes",
+					sql: process.env.DEBUG_SQL_CONSOLE === "yes",
+					req: process.env.DEBUG_REQ_CONSOLE === "yes",
+				},
+				file: {
+					dbg: process.env.DEBUG_DBG_LOGFILE,
+					sql: process.env.DEBUG_SQL_LOGFILE,
+					req: process.env.DEBUG_REQ_LOGFILE,
+				},
+			}
+		}
 	}
 
-	@MaterializeIt get connection() {
-		return drizzle(createPool(process.env["DB_URI"]!), {mode: "default", schema, logger: true});
-	}
-
-	@MaterializeIt get tmpFile() {
-		return new TmpFileFactory(process.env["PATH_TMP"]!)
-	}
+	@MaterializeIt get migrator() {return async () => migrate(this.connection, {migrationsFolder: this.config.db.migrationsFolder});}
 
 	@MaterializeIt get storage() {
 		return new Storage(
-			process.env["PATH_FILES"]!,
+			this.config.storage.filePath,
 			services.connection,
 			storage,
 			new CacheWithNodeCache(new NodeCache(), 60),
-			imgCleanupFactory(process.env["PATH_IMG"]!)
+			imgCleanupFactory(this.config.storage.imgPath)
 		)
 	}
 
-	@MaterializeIt get MethodCache(): (ttl: number) => MethodDecorator {
-		return methodCacheFactory(new CacheWithNodeCache(new NodeCache(), 60))
-	}
-
-	@MaterializeIt get responseCache() {
-		return new CacheWithNodeCache(new NodeCache(), 60)
-	}
-
-	@MaterializeIt get entityCache() {
-		return new NodeCache();
-	}
-
-
+	@MaterializeIt get connection() { return drizzle(createPool(this.config.db.uri), {mode: "default", schema, logger: this.dbg});}
+	@MaterializeIt get tmpFile() {return new TmpFileFactory(this.config.storage.tmpPath)}
+	@MaterializeIt get MethodCache(): (ttl: number) => MethodDecorator {return methodCacheFactory(new CacheWithNodeCache(new NodeCache(), 60))}
+	@MaterializeIt get responseCache() { return new CacheWithNodeCache(new NodeCache(), 60)}
+	@MaterializeIt get entityCache() { return new NodeCache();}
 }
 
+
 export const services = new Services();
+export let dbg = services.dbg;

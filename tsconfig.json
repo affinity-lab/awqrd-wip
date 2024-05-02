@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-
-    // Enable latest features
+    "paths": {
+      "@affinity-lab/awqrd/*": ["../awqrd/*"]
+    },   // Enable latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
     "module": "ESNext",
