@@ -1,3 +1,3 @@
-import {Client} from "@affinity-lab/awqrd";
+import {Client} from "@affinity-lab/comet";
 
 export class WebClient extends Client {}

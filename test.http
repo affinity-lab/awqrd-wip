@@ -1,0 +1,9 @@
+###
+GET https://randomuser.me/api/
+
+> {%
+    let gender = response.body.results[0].gender
+%}
+
+###
+GET http://index.hu/{{gender}}

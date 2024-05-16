@@ -1,65 +1,68 @@
-import type {Dto, MaybeNull} from "@affinity-lab/awqrd";
-import {cachedGetByFactory, cachePlugin, CacheWithNodeCache, Entity, type EntityInitiator, EntityRepository, Export, ImageCollection, likeString, MaterializeIfDefined, MaterializeIt, omitFieldsIP, resultCacheFactory, stmt, tagPlugin, TagRepository, validatorPlugin} from "@affinity-lab/awqrd";
-import {like, sql} from "drizzle-orm";
+import {cachedGetByFactory, cachePlugin, type Dto, Entity, type EntityFields, EntityRepository, Export, ImageCollection, Import, likeString, resultCacheFactory, stmt, validatorPlugin} from "@affinity-lab/storm";
+import {CacheWithNodeCache, MaterializeIfDefined, type MaybeNull, omitFieldsIP} from "@affinity-lab/util";
+import {eq} from "drizzle-orm";
 import {z} from "zod";
 import {services} from "../lib/services.ts";
 import {user} from "./+schema.ts";
 import {BasicCollection} from "./collection-types/basic-collection.ts";
 import {DocumentCollection} from "./collection-types/document-collection.ts";
-import {tagRepository} from "./tag";
 
 let cache = new CacheWithNodeCache(services.entityCache, 30, 'user');
 let mapCache = new CacheWithNodeCache(services.entityCache, 30, 'user.map');
 let resultCache = resultCacheFactory(cache, mapCache, "email")
 
+// ********************************************************************************************************************* REPOSITORY
 
-class UserRepository<
-	DB extends typeof services.connection,
-	SCHEMA extends typeof user,
-	ENTITY extends EntityInitiator<ENTITY, typeof User>
-> extends EntityRepository<DB, SCHEMA, ENTITY> {
-	initialize() {
-		cachePlugin(this, cache, resultCache);
-		validatorPlugin(this, z.object({
-			name: z.string().min(3)
-		}));
-		tagPlugin(this, tagRepository as unknown as TagRepository<any, any, any>, "role") // TODO typehint
+class Repository extends EntityRepository<typeof user, User> {
+
+	protected initialize() {
+		this
+			.addPlugin(cachePlugin(cache, resultCache))
+			.addPlugin(validatorPlugin(z.object({name: z.string().min(3)})))
+			.addPlugin(services.storage.plugin())
 	}
 
-	@MaterializeIt
-	private get stmt_find() {
-		return stmt<{ search: string }, Array<User>>(
-			this.db.select().from(this.schema).where(like(user.name, sql.placeholder("search"))),
+	private stmt = {
+		search: stmt<{ search: string }, Array<User>>(
+			this.db.select().from(this.schema).where(eq(this.schema.id, 1)),
 			resultCache,
-			this.instantiators.all
+			this.instantiate.all
+		),
+		find: stmt<{ search: string }, Array<User>>(
+			this.db.select().from(this.schema).where(eq(this.schema.id, 1)),
+			this.instantiate.all
 		)
 	}
 
-	async find(search: string): Promise<Array<User>> {
-		return search === "" ? [] : await this.stmt_find({search: likeString.contains(search)})
-	}
 
+	public async search(search: string) { return this.stmt.search({search})}
+	public async find(search: string): Promise<Array<User>> { return search === "" ? [] : await this.stmt.find({search: likeString.contains(search)})}
+	public getByEmail = cachedGetByFactory<string, User>(this, "email", resultCache, mapCache)
 
-	getByEmail = cachedGetByFactory<string, User>(this, "email", resultCache, mapCache)
-
-
-	protected transformSaveDTO(dto: Dto<SCHEMA>) {
+	protected transformSaveDTO(dto: Dto<typeof user>) {
 		super.transformSaveDTO(dto);
 		omitFieldsIP(dto, "createdAt", "updatedAt", "password");
 	}
 
-	protected transformItemDTO(dto: Dto<SCHEMA>) {
+	protected transformItemDTO(dto: Dto<typeof user>) {
 		super.transformItemDTO(dto);
 		omitFieldsIP(dto, "password")
 	}
 }
 
-export class User extends Entity implements Partial<Dto<typeof user>> {
-	async savePassword(password: string) { await repository.overwrite(this, {password})}
-	@Export name: MaybeNull<string> = null;
-	@Export email: MaybeNull<string> = null;
+
+export class User extends Entity implements EntityFields<typeof user> {
+
+	static repository: Repository;
+
+	async savePassword(password: string) { await this.$overwrite({password})}
+
+	@Export @Import name: MaybeNull<string> = null;
+	@Export @Import email: MaybeNull<string> = null;
 	@Export updatedAt: MaybeNull<Date> = null;
-	@Export role: MaybeNull<string> = null;
+	role: MaybeNull<string> = null;
+
+	@Export get myRoles() {return this.role?.split(",")}
 
 	@Export @MaterializeIfDefined get images() {return imgCollection.handler(this)}
 	@Export @MaterializeIfDefined get docs() {return docCollection.handler(this)}
@@ -70,9 +73,7 @@ export class User extends Entity implements Partial<Dto<typeof user>> {
 }
 
 
-// EXPORT REPOSITORY ---
-let repository = new UserRepository(services.connection, user, User);
-export {repository as userRepository}
+let repository = new Repository(services.connection, user, User)
 let collectionsGroup = services.storage.getGroupDefinition("user", repository);
 let imgCollection = new ImageCollection("images", collectionsGroup, {limit: {size: "14mb", count: Infinity}, mime: "image/*"})
 let docCollection = new DocumentCollection("doc", collectionsGroup, {limit: {size: "14mb", count: Infinity}})

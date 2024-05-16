@@ -1,4 +1,4 @@
-import {Collection, type MetaField} from "@affinity-lab/awqrd";
+import {Collection, type MetaField} from "@affinity-lab/storm";
 
 type DocumentCollectionMetadata = { title: string }
 

@@ -1,4 +1,4 @@
-import {type Client, Comet} from "@affinity-lab/awqrd";
+import {type Client, Comet} from "@affinity-lab/comet";
 import type {Context} from "hono";
 import {clients} from "../lib/clients/clients.ts";
 

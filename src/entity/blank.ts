@@ -1,19 +1,12 @@
-import {type Dto, Entity, type EntityInitiator, EntityRepository} from "@affinity-lab/awqrd";
+import {Entity, type EntityFields, EntityRepository} from "@affinity-lab/storm";
 import {services} from "../lib/services.ts";
 import {blank} from "./+schema.ts";
 
 
-/**
- *
- */
-class BlankRepository<
-	DB extends typeof services.connection,
-	SCHEMA extends typeof blank,
-	ENTITY extends EntityInitiator<ENTITY, typeof Blank>
-> extends EntityRepository<DB, SCHEMA, ENTITY> {}
+class Repository extends EntityRepository<typeof blank, Blank> {}
 
-export class Blank extends Entity implements Partial<Dto<typeof blank>> {}
+export class Blank extends Entity implements EntityFields<typeof blank> {
+	static repository: Repository;
+}
 
-let repository = new BlankRepository(services.connection, blank, Blank);
-
-export {repository as blankRepository}
+new Repository(services.connection, blank, Blank);

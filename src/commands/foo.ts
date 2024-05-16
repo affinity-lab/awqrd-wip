@@ -1,5 +1,6 @@
-import {Comet, cometError, type CometState} from "@affinity-lab/awqrd";
-import {userRepository} from "../entity/user.ts";
+import {type Client, Comet, cometError, type CometState} from "@affinity-lab/comet";
+import {z} from "zod";
+import {User} from "../entity/user.ts";
 import {FooBase} from "./foo-base.ts";
 
 function auth(state: CometState) {
@@ -17,13 +18,13 @@ export class Foo extends FooBase {
 			auth,
 			allowOnlyIfUserExists,
 		],
+		validate: z.object({id: z.number().gte(100)})
 	})
-
 	async baz(
 		@Comet.Env env: any,
 		@Comet.Args args: { id: number },
 	) {
-		let user = await userRepository.get(args.id)
+		let user = await User.repository.get(args.id)
 		return user?.$export();
 	}
 

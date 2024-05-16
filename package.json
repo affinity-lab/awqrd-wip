@@ -16,7 +16,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@affinity-lab/awqrd": "github:affinity-lab/awqrd#master",
+    "@affinity-lab/storm": "^1.0.18",
+    "@affinity-lab/comet": "^1.0.20",
+    "@affinity-lab/util": "^2.0.3",
+    "@affinity-lab/storm-schema-helper": "^1.0.12",
     "@types/mime-types": "^2.1.4",
     "chalk": "^5.3.0",
     "change-case-all": "^2.1.0",

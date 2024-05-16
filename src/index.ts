@@ -1,36 +1,44 @@
 dbg.hello();
 
 
-import {getClient, readCommands, recognizeClient, stormImgServerHono, stormStorageServerHono} from "@affinity-lab/awqrd";
-import {type Context, Hono} from "hono";
-import {logger} from "hono/logger";
-import path from "path";
-import {clients} from "./lib/clients/clients.ts";
+import {User} from "./entity/user.ts";
 import {dbg, services} from "./lib/services.ts";
-
-
 await services.migrator();
-readCommands(path.resolve(__dirname, "commands/"), clients);
 
-const app = new Hono();
-app.use(logger(dbg.req));
-stormStorageServerHono(app, services.config.storage.filePath, services.config.storage.fileUrlPrefix);
-stormImgServerHono(app, services.config.storage.imgPath, services.config.storage.imgUrlPrefix, services.config.storage.filePath, true);
+let user = await User.repository.search("elvis")
 
-app.post('/api/:command',
-	recognizeClient,
-	async (ctx: Context<Record<string, any>>) => {
-		let {name, version, apiKey}: { name: string, version: number, apiKey: string } = ctx.get("comet-client");
-		let client = getClient(clients, name, version, apiKey);
-		return client.resolve(ctx.req.param("command"), ctx);
-	}
-);
+user[0]?.$import({name:"Gecc", email:"GeccGecc", asdfasdfa:2341234});
 
-Bun.serve({
-	fetch: app.fetch,
-	port: services.config.server.port
-});
+console.log(user[0]?.$export())
+console.log(Date.now())
 
+// readCommands(path.resolve(__dirname, "commands/"), clients);
+//
+//
+// const app = new Hono();
+// app.use(logger(dbg.req.bind(dbg)));
+// stormStorageServerHono(app, services.config.storage.filePath, services.config.storage.fileUrlPrefix);
+// stormImgServerHono(app, services.config.storage.imgPath, services.config.storage.imgUrlPrefix, services.config.storage.filePath, true);
+//
+// app.post('/api/:command',
+// 	recognizeClient,
+// 	async (ctx: Context<Record<string, any>>) => {
+// 		let {name, version, apiKey}: { name: string, version: number, apiKey: string } = ctx.get("comet-client");
+// 		let client = getClient(clients, name, version, apiKey);
+// 		return client.resolve(ctx.req.param("command"), ctx);
+// 	}
+// );
+//
+// Bun.serve({
+// 	fetch: app.fetch,
+// 	port: services.config.server.port
+// });
+
+// console.log(userRepo.find("elvis"))
+
+// let user = User.repository.find("Hello");
+
+// User
 
 /*let user;
  let users = await userRepository.find("elvis")
@@ -131,3 +139,4 @@ Bun.serve({
 // 	}
 // 	return c.body("OK")
 // });
+
