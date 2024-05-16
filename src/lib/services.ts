@@ -1,5 +1,5 @@
 import { imgCleanupFactory, Storage} from "@affinity-lab/storm";
-import {CacheWithNodeCache, MaterializeIt, methodCacheFactory, DBG, TmpFileFactory} from "@affinity-lab/util";
+import {CacheWithNodeCache, DBG, MaterializeIt, methodCacheFactory, TmpFileFactory} from "@affinity-lab/util";
 import {drizzle} from "drizzle-orm/mysql2";
 import {migrate} from "drizzle-orm/mysql2/migrator";
 import {createPool} from "mysql2/promise";
@@ -43,7 +43,10 @@ class Services {
 		}
 	}
 
-	@MaterializeIt get migrator() {return async () => migrate(this.connection, {migrationsFolder: this.config.db.migrationsFolder});}
+	@MaterializeIt get migrator() {return async () =>{
+		dbg.log("Running migrations");
+		await migrate(this.connection, {migrationsFolder: this.config.db.migrationsFolder});
+	}}
 
 	@MaterializeIt get storage() {
 		return new Storage(

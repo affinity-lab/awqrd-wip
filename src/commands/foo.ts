@@ -1,4 +1,4 @@
-import {type Client, Comet, cometError, type CometState} from "@affinity-lab/comet";
+import {Comet, cometError, type CometState} from "@affinity-lab/comet";
 import {z} from "zod";
 import {User} from "../entity/user.ts";
 import {FooBase} from "./foo-base.ts";
@@ -13,20 +13,17 @@ function allowOnlyIfUserExists(state: CometState) {
 @Comet.Group({name: "foo"})
 export class Foo extends FooBase {
 	@Comet.Command({
-		name: "bazzzzz",
-		preprocess: [
-			auth,
-			allowOnlyIfUserExists,
-		],
-		validate: z.object({id: z.number().gte(100)})
+		preprocess: [auth, allowOnlyIfUserExists],
+		validate: z.object({name: z.number().lt(2000)})
 	})
 	async baz(
-		@Comet.Env env: any,
 		@Comet.Args args: { id: number },
+		@Comet.Env env: { user: string },
 	) {
 		let user = await User.repository.get(args.id)
-		return user?.$export();
+		return {
+			user: user?.$pick("name", "email"),
+			auth: env.user
+		}
 	}
-
-
 }
