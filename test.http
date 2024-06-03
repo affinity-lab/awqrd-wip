@@ -1,9 +1,10 @@
 ###
-GET https://randomuser.me/api/
+POST http://localhost:3000/api/foo.baz
+Client: mobile
+Client-Version: 1
+Client-Key: 123456
+Content-Type: application/json
 
-> {%
-    let gender = response.body.results[0].gender
-%}
-
-###
-GET http://index.hu/{{gender}}
+{
+  "name": 1
+}

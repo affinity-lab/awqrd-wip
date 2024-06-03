@@ -1,4 +1,4 @@
-import { imgCleanupFactory, Storage} from "@affinity-lab/storm";
+import { imgCleanupFactory, Storage} from "@affinity-lab/storm-storage";
 import {CacheWithNodeCache, DBG, MaterializeIt, methodCacheFactory, TmpFileFactory} from "@affinity-lab/util";
 import {drizzle} from "drizzle-orm/mysql2";
 import {migrate} from "drizzle-orm/mysql2/migrator";
@@ -6,7 +6,6 @@ import {createPool} from "mysql2/promise";
 import NodeCache from "node-cache";
 import process from "process";
 import * as schema from "../entity/+schema.ts";
-import {storage} from "../entity/+schema.ts";
 
 class Services {
 
@@ -52,7 +51,7 @@ class Services {
 		return new Storage(
 			this.config.storage.filePath,
 			services.connection,
-			storage,
+			schema.storage,
 			new CacheWithNodeCache(new NodeCache(), 60),
 			imgCleanupFactory(this.config.storage.imgPath)
 		)

@@ -1,23 +1,25 @@
-import {cachedGetByFactory, cachePlugin, type Dto, Entity, type EntityFields, EntityRepository, Export, ImageCollection, Import, likeString, resultCacheFactory, stmt, validatorPlugin} from "@affinity-lab/storm";
-import {CacheWithNodeCache, MaterializeIfDefined, type MaybeNull, omitFieldsIP} from "@affinity-lab/util";
+import {MaterializeIfDefined} from "@affinity-lab/util";
+import {type Dto, Entity, type EntityFields, EntityRepository, Export, Import, likeString, stmt} from "@affinity-lab/storm";
+import {cachedGetByFactory, cachePlugin, ResultCacheWithMaps} from "@affinity-lab/storm-cache";
+import {validatorPlugin} from "@affinity-lab/storm-validator";
+import {CacheWithNodeCache, type MaybeNull, omitFieldsIP} from "@affinity-lab/util";
 import {eq} from "drizzle-orm";
 import {z} from "zod";
 import {services} from "../lib/services.ts";
+import {BasicCollection, DocumentCollection, ImageCollection} from "./+collection-types.ts";
 import {user} from "./+schema.ts";
-import {BasicCollection} from "./collection-types/basic-collection.ts";
-import {DocumentCollection} from "./collection-types/document-collection.ts";
-
-let cache = new CacheWithNodeCache(services.entityCache, 30, 'user');
-let mapCache = new CacheWithNodeCache(services.entityCache, 30, 'user.map');
-let resultCache = resultCacheFactory(cache, mapCache, "email")
-
-// ********************************************************************************************************************* REPOSITORY
 
 class Repository extends EntityRepository<typeof user, User> {
 
+	private cache = new ResultCacheWithMaps(
+		new CacheWithNodeCache(services.entityCache, 30, 'user'),
+		new CacheWithNodeCache(services.entityCache, 30, 'user.map'),
+		["email"]
+	)
+
 	protected initialize() {
 		this
-			.addPlugin(cachePlugin(cache, resultCache))
+			.addPlugin(cachePlugin(this.cache))
 			.addPlugin(validatorPlugin(z.object({name: z.string().min(3)})))
 			.addPlugin(services.storage.plugin())
 	}
@@ -25,7 +27,7 @@ class Repository extends EntityRepository<typeof user, User> {
 	private stmt = {
 		search: stmt<{ search: string }, Array<User>>(
 			this.db.select().from(this.schema).where(eq(this.schema.id, 1)),
-			resultCache,
+			this.cache.setter,
 			this.instantiate.all
 		),
 		find: stmt<{ search: string }, Array<User>>(
@@ -37,7 +39,7 @@ class Repository extends EntityRepository<typeof user, User> {
 
 	public async search(search: string) { return this.stmt.search({search})}
 	public async find(search: string): Promise<Array<User>> { return search === "" ? [] : await this.stmt.find({search: likeString.contains(search)})}
-	public getByEmail = cachedGetByFactory<string, User>(this, "email", resultCache, mapCache)
+	public getByEmail = cachedGetByFactory<string, User>(this, "email", this.cache)
 
 	protected transformSaveDTO(dto: Dto<typeof user>) {
 		super.transformSaveDTO(dto);

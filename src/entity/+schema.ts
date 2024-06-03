@@ -1,8 +1,9 @@
-import {id, stormStorageSchemaFactory} from "@affinity-lab/storm-schema-helper";
-import {char, int, json, mysqlTable, serial, text, timestamp, unique, varchar} from "drizzle-orm/mysql-core";
+import {stormSchemaHelpers} from "@affinity-lab/storm";
+import {stormStorageSchemaHelpers} from "@affinity-lab/storm-storage";
+import {char, int, mysqlTable, text, timestamp, varchar} from "drizzle-orm/mysql-core";
 
 export const user = mysqlTable("user", {
-	id: id(),
+	id: stormSchemaHelpers.id(),
 	name: varchar("name", {length: 255}),
 	email: varchar("email", {length: 255}),
 	sex: varchar("sex", {length: 255}),
@@ -13,20 +14,20 @@ export const user = mysqlTable("user", {
 });
 
 export const blank = mysqlTable("blank", {
-	id: id(),
+	id: stormSchemaHelpers.id(),
 });
 
 export const post = mysqlTable("post", {
-	id: id(),
+	id: stormSchemaHelpers.id(),
 	title: varchar("title", {length: 255}),
 	body: text("body"),
 	authorId: int("author_id")
 });
 
 export const tag = mysqlTable("tag", {
-	id: id(),
+	id: stormSchemaHelpers.id(),
 	name: varchar("name", {length: 2048})
 })
 
 
-export let storage = stormStorageSchemaFactory()
+export let storage = stormStorageSchemaHelpers.storageSchemaFactory();
