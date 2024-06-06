@@ -7,7 +7,7 @@ import {clients} from "../lib/clients/clients.ts";
 export class FooBase {
 
 	@Comet.Command({
-		clients: [...clients.mobile.pick(1)]
+		clients: clients.client("mobile", 1)
 	})
 	bar(@Comet.Args args: { name: string }) {
 		return {name: args.name.toUpperCase()}
@@ -16,7 +16,7 @@ export class FooBase {
 
 	@Comet.Command({
 		name: "bar",
-		clients: clients.mobile.pick(2)
+		clients: clients.client("mobile", 2)
 	})
 	bar2({args}: CometState & {
 		args: { name: string }

@@ -6,10 +6,13 @@
     "run": "bun run src/index.ts",
     "dev": "bun --watch src/index.ts",
     "mig": "bunx drizzle-kit generate:mysql",
-    "gen": "bunx drizzle-kit generate:mysql"
+    "gen": "bunx drizzle-kit generate:mysql",
+    "buni": "bun pm cache rm && bun i",
+    "bunu": "bun pm cache rm && bun update"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/node": "latest",
     "drizzle-kit": "^0.20.14"
   },
   "peerDependencies": {
@@ -21,6 +24,7 @@
     "@affinity-lab/storm-schema-helper": "^1.0.12",
     "@affinity-lab/storm-storage": "^1.0.119",
     "@affinity-lab/storm-storage-server-bun-hono": "^1.0.119",
+    "@affinity-lab/comet-hono-bun": "^1.0.44",
     "@affinity-lab/util": "^2.0.3",
     "@types/mime-types": "^2.1.4",
     "chalk": "^5.3.0",
