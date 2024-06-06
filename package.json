@@ -25,6 +25,8 @@
     "@affinity-lab/storm-storage": "^1.0.119",
     "@affinity-lab/storm-storage-server-bun-hono": "^1.0.119",
     "@affinity-lab/comet-hono-bun": "^1.0.44",
+    "@affinity-lab/storm-validator": "^1.0.129",
+    "@affinity-lab/storm-cache": "^1.0.131",
     "@affinity-lab/util": "^2.0.3",
     "@types/mime-types": "^2.1.4",
     "chalk": "^5.3.0",
