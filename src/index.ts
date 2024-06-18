@@ -14,7 +14,7 @@ dbg.hello();
 await services.migrator();
 
 // load commands and attach them to clients
-clients.readCommands(path.resolve(__dirname, "commands/"))
+clients.readCommands(path.resolve(__dirname, "commands/**"))
 
 // create hono app
 const app = new Hono()
