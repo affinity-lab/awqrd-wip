@@ -6,7 +6,7 @@ import {logger} from "hono/logger";
 import * as path from "path";
 import type {StatusCode} from "hono/utils/http-status";
 import {clients} from "./lib/clients/clients.ts";
-import {dbg, services} from "./lib/services.ts";
+import {config, dbg, services} from "./lib/services.ts";
 
 dbg.hello();
 
@@ -43,5 +43,6 @@ app.post('/api/:command',
 // serve the hono app
 Bun.serve({fetch: app.fetch, port: services.config.server.port});
 
-dbg.msg("Server is up and running!\nhttp://localhost:3000/");
+if(config.app.mode !== 'prod') clients.describe();
+dbg.msg(`Server is up and running!\n PORT: ${config.server.port}`);
 

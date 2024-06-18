@@ -13,6 +13,9 @@ class Services {
 
 	@MaterializeIt get config() {
 		return {
+			app: {
+				mode: process.env.APP_MODE?.toLowerCase() || "dev",
+			},
 			db: {
 				migrationsFolder: process.env.DB_MIGRATIONS!,
 				uri: process.env["DB_URI"]!,
@@ -25,7 +28,7 @@ class Services {
 				imgUrlPrefix: process.env.URL_IMAGES_PREFIX!,
 			},
 			server: {
-				port: process.env.port!
+				port: process.env.PORT!
 			},
 			debug: {
 				console: {
@@ -66,4 +69,5 @@ class Services {
 
 
 export const services = new Services();
-export let dbg = services.dbg;
+export const dbg = services.dbg;
+export const config = services.config;
