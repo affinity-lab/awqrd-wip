@@ -46,6 +46,8 @@ class HonoClients<G extends string = string> extends Clients<G> {
 	}
 }
 
+
+// NOTE: THIS IS JUST AN EXAMPLE
 export let clients = new HonoClients({
 	mobile: new ClientGroup(
 		new MobileClient(1, middlewares, false),

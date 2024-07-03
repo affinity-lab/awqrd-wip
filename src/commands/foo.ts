@@ -2,6 +2,7 @@ import {Comet, cometError, type CometState} from "@affinity-lab/comet";
 import {z, ZodObject} from "zod";
 import {User} from "../entity/user.ts";
 import {FooBase} from "./foo-base.ts";
+import {clients} from "../lib/clients/clients";
 
 function auth(state: CometState) {
 	state.env.user = "elvis presley"
@@ -19,7 +20,7 @@ function validateArgs(z: ZodObject<any>) {
 	}
 }
 
-@Comet.Group({name: "foo"})
+@Comet.Group({name: "foo", clients: clients.client("web", 1)})
 export class Foo extends FooBase {
 	@Comet.Command({
 		name: "barz",

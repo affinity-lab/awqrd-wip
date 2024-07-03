@@ -24,10 +24,8 @@ export const post = mysqlTable("post", {
 	authorId: int("author_id")
 });
 
-export const tag = mysqlTable("tag", {
-	id: stormSchemaHelpers.id(),
-	name: varchar("name", {length: 2048})
-})
+// NOTE: for references you can use stormSchemaHelpers.reference
+// EXAMPLE: userId = stormSchemaHelpers.reference("user_id", () => user.id)
 
 
 export let storage = stormStorageSchemaHelpers.storageSchemaFactory();
